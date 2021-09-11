@@ -70,5 +70,8 @@ if __name__ == '__main__':
     y = [np.ones(d.shape[0:1]) * i for i,d in enumerate(data)]
     y = np.concatenate(y)
     
-    x.save('x.npy')
-    y.save('y.npy')
+    with open('x.npy', 'wb') as f:
+        np.save(f, x)
+
+    with open('y.npy', 'wb') as f:
+        np.save(f, y)
