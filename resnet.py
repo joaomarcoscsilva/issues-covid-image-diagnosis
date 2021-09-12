@@ -24,6 +24,7 @@ from haiku._src import module
 from haiku._src import pool
 import jax
 import jax.numpy as jnp
+import gradcam
 
 # If forking replace this block with `import haiku as hk`.
 hk = types.ModuleType("haiku")
@@ -361,9 +362,10 @@ class ResNet(hk.Module):
 
     self.logits = hk.Linear(num_classes, **logits_config)
 
-  def __call__(self, inputs, is_training, test_local_stats=False, return_representation = False):
+  def initial_conv_and_max_pool(self, inputs, is_training, test_local_stats=False):
     out = inputs
     out = self.initial_conv(out)
+
     if not self.resnet_v2:
       out = self.initial_batchnorm(out, is_training, test_local_stats)
       out = jax.nn.relu(out)
@@ -372,20 +374,77 @@ class ResNet(hk.Module):
                       window_shape=(1, 3, 3, 1),
                       strides=(1, 2, 2, 1),
                       padding="SAME")
+    return out
+
+  def final_activation_and_batchnorm(self, out, is_training, test_local_stats):
+    if self.resnet_v2:
+      out = self.final_batchnorm(out, is_training, test_local_stats)
+      out = jax.nn.relu(out)
+    return out    
+
+  def conv_to_logits(self, out):
+    out = jnp.mean(out, axis=[1, 2]) # Global average pooling
+    return self.logits(out)
+
+  def gradcam(self, inputs, is_training, test_local_stats=False, gradcam_depth=0):
+    """Computes the gradcam for the given inputs.
+
+    Args:
+        inputs (np.array): Input batch of images.
+        is_training (bool): Set this to true when training.
+        test_local_stats (bool, optional): Defaults to False.
+        embedding_depth (int, optional): Controls the depth of the gradcam returned, counting from the end.
+                                         For example: 0 returns the gradcam of the last conv block, 1 returns the gradcam of the conv block before that.
+                                         Defaults to 0.
+
+    Returns:
+        np.array: The Grad-CAM at the given depth.
+    """
+
+    assert gradcam_depth >= 0
+    out = self.initial_conv_and_max_pool(inputs, is_training, test_local_stats)
+    block_groups = self.block_groups[:-gradcam_depth] if gradcam_depth > 0 else self.block_groups
+
+    for block_group in block_groups:
+      out = block_group(out, is_training, test_local_stats)
     
-    if return_representation:
-        for block_group in self.block_groups[:-1]:
-            out = block_group(out, is_training, test_local_stats)
-        return out
+    if gradcam_depth == 0:
+      out = self.final_activation_and_batchnorm(out, is_training, test_local_stats)
+
+    return gradcam.resnet(self, out, test_local_stats)
+
+  def embedding(self, inputs, is_training, test_local_stats=False, embedding_depth=1):
+    """Computes a lower-dimensional representation of inputs and returns it.
+
+    Args:
+        inputs (np.array): Input batch of images.
+        is_training (bool): Set this to true when training.
+        test_local_stats (bool, optional): Defaults to False.
+        embedding_depth (int, optional): Controls the depth of the embedding returned, counting from the end.
+                                         For example: 0 returns the output of the last conv block, 1 returns the output of the conv block before that.
+                                         Defaults to 1.
+
+    Returns:
+        np.array: Embedding of the input image batch.
+    """
+
+    assert embedding_depth >= 0
+
+    out = self.initial_conv_and_max_pool(inputs, is_training, test_local_stats)
+
+    for block_group in self.block_groups[:-embedding_depth]:
+      out = block_group(out, is_training, test_local_stats)
+    
+    return out
+
+  def __call__(self, inputs, is_training, test_local_stats=False):
+    out = self.initial_conv_and_max_pool(inputs, is_training, test_local_stats)
 
     for block_group in self.block_groups:
       out = block_group(out, is_training, test_local_stats)
 
-    if self.resnet_v2:
-      out = self.final_batchnorm(out, is_training, test_local_stats)
-      out = jax.nn.relu(out)
-    out = jnp.mean(out, axis=[1, 2])
-    return self.logits(out)
+    out = self.final_activation_and_batchnorm(out, is_training, test_local_stats)
+    return self.conv_to_logits(out)
 
 
 class ResNet18(ResNet):
