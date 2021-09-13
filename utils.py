@@ -1,0 +1,1 @@
+CLASS_NAMES = ['Normal', 'Pneumonia-Bacterial', 'COVID-19', 'Pneumonia-Viral']

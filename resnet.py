@@ -386,16 +386,17 @@ class ResNet(hk.Module):
     out = jnp.mean(out, axis=[1, 2]) # Global average pooling
     return self.logits(out)
 
-  def gradcam(self, inputs, is_training, test_local_stats=False, gradcam_depth=0):
+  def gradcam(self, inputs, is_training, test_local_stats=False, gradcam_depth=0, counterfactual=False):
     """Computes the gradcam for the given inputs.
 
     Args:
         inputs (np.array): Input batch of images.
         is_training (bool): Set this to true when training.
         test_local_stats (bool, optional): Defaults to False.
-        embedding_depth (int, optional): Controls the depth of the gradcam returned, counting from the end.
-                                         For example: 0 returns the gradcam of the last conv block, 1 returns the gradcam of the conv block before that.
-                                         Defaults to 0.
+        gradcam_depth (int, optional): Controls the depth of the gradcam returned, counting from the end.
+                                       For example: 0 returns the gradcam of the last conv block, 1 returns the gradcam of the conv block before that.
+                                       Defaults to 0.
+        counterfactual (bool, optional): Set this to true to return the counterfactual explanations.
 
     Returns:
         np.array: The Grad-CAM at the given depth.
@@ -411,7 +412,7 @@ class ResNet(hk.Module):
     if gradcam_depth == 0:
       out = self.final_activation_and_batchnorm(out, is_training, test_local_stats)
 
-    return gradcam.resnet(self, out, test_local_stats)
+    return gradcam.resnet(self, out, counterfactual=counterfactual)
 
   def embedding(self, inputs, is_training, test_local_stats=False, embedding_depth=1):
     """Computes a lower-dimensional representation of inputs and returns it.
