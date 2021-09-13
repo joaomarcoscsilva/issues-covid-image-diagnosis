@@ -16,6 +16,7 @@ def load_data(path, rng, test_size = 0.1, num_classes = 4):
     
     x = x[ids]
     y = y[ids]
+    x = process_data(x)
     
     y = jax.nn.one_hot(y, num_classes)
 
@@ -29,3 +30,6 @@ def load_data(path, rng, test_size = 0.1, num_classes = 4):
 
 
     return (x_train, y_train), (x_test, y_test)
+
+def process_data(images):
+    return images.mean(axis=-1)
