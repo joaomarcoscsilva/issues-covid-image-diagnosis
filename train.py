@@ -52,7 +52,7 @@ def get_datagen(parallel, batch_size, X, Y = None, include_last = False):
         
     return datagen, num_batches
 
-def get_network_fns(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256, 3)):
+def get_network_fns(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256, 1)):
     """
     Creates all the functions necessary to train the given neural network.
     """

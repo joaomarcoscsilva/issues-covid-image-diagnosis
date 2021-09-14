@@ -2,7 +2,6 @@ import jax
 from jax import numpy as np
 from glob import glob
 
-
 def load_data(path, rng, test_size = 0.1, num_classes = 4):
     """
     Loads the dataset to memory, already shuffled and split into train and test.
@@ -28,8 +27,9 @@ def load_data(path, rng, test_size = 0.1, num_classes = 4):
     x_train = x[split_point:]
     y_train = y[split_point:]
 
-
     return (x_train, y_train), (x_test, y_test)
 
 def process_data(images):
-    return images.mean(axis=-1)
+    #images = images.mean(axis=-1)
+    #images = images[..., np.newaxis]
+    return images
