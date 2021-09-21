@@ -3,3 +3,6 @@ data/**/*
 __pycache__
 **/*.npy
 *.npy
+**/*.pickle
+*.pickle
+models/
