@@ -64,14 +64,15 @@ if __name__ == '__main__':
     if len(sys.argv) >= 3 and sys.argv[2].isdigit():
         resolution = int(sys.argv[2])
 
-    data = load_data(sys.argv[1])
+    foldername = sys.argv[1]
+    data = load_data(foldername)
     x = np.concatenate(data)
 
     y = [np.ones(d.shape[0:1]) * i for i,d in enumerate(data)]
     y = np.concatenate(y)
     
-    with open('x.npy', 'wb') as f:
+    with open(foldername + '/x.npy', 'wb') as f:
         np.save(f, x)
 
-    with open('y.npy', 'wb') as f:
+    with open(foldername + '/y.npy', 'wb') as f:
         np.save(f, y)

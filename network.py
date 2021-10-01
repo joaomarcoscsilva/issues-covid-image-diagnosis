@@ -3,7 +3,7 @@ import numpy as np
 import jax
 import optax
 from tqdm import tqdm
-import data
+import dataset
 
 class NetworkContainer(NamedTuple):
     init_fn: Callable
@@ -109,7 +109,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         _apply_fn = p_apply_fn if parallel else net.apply
         
         # Gets a data generator for the dataset
-        datagen, num_batches = data.get_datagen(parallel, batch_size, X, include_last = True)
+        datagen, num_batches = dataset.get_datagen(parallel, batch_size, X, include_last = True)
         
         # List with all the predictions
         preds = []
@@ -133,7 +133,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         _loss_fn = p_loss_fn if parallel else loss_fn
         
         # Gets a data generator for the dataset
-        datagen, num_batches = data.get_datagen(parallel, batch_size, X, Y, include_last = True)
+        datagen, num_batches = dataset.get_datagen(parallel, batch_size, X, Y, include_last = True)
         
         # Lists with all the metrics
         losses = []
@@ -156,7 +156,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         """
 
         # Gets a data generator for the dataset
-        datagen, num_batches = data.get_datagen(parallel, batch_size, x_train, y_train, include_last = False)
+        datagen, num_batches = dataset.get_datagen(parallel, batch_size, x_train, y_train, include_last = False)
 
         
         # Creates a progress bar for the epoch
@@ -168,7 +168,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
 
             # Iterates the training set
             for x, y in datagen():
-                
+
                 # Performs the training step
                 params, state, optim_state, _loss, _acc = update(params, state, optim_state, x, y)
                 _loss, _acc = _loss.mean(), _acc.mean()

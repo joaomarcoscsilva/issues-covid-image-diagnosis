@@ -6,3 +6,9 @@ __pycache__
 **/*.pickle
 *.pickle
 models/
+kaggle.json
+*.json
+**/*.json
+COVID-19_Radiography_Dataset/
+*.png
+**/*.png

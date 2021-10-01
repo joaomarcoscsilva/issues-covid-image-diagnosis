@@ -6,7 +6,6 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import utils
-import data
 
 def resnet(resnet, conv_out, counterfactual):
   jac = jax.jacrev(resnet.conv_to_logits)(conv_out)
@@ -37,7 +36,7 @@ def resnet(resnet, conv_out, counterfactual):
 
 def generate_from_data(x_gradcam_data, y_gradcam_data, net, params, state, gradcam_counterfactual=False):
   gradcam_batch_size = 8
-  datagen, _ = data.get_datagen(True, gradcam_batch_size, x_gradcam_data, y_gradcam_data, include_last = False)
+  datagen, _ = dataset.get_datagen(True, gradcam_batch_size, x_gradcam_data, y_gradcam_data, include_last = False)
 
   # List with all the predictions
   cams = []

@@ -2,31 +2,48 @@ import jax
 from jax import numpy as np
 from glob import glob
 
-def load_data(path, rng, test_size = 0.1, num_classes = 4):
-    """
-    Loads the dataset to memory, already shuffled and split into train and test.
-    """
+class Dataset:
+    x_train: np.array
+    y_train: np.array
+    x_test: np.array
+    y_test: np.array
+    x_all: np.array
+    y_all: np.array
 
-    x = jax.device_put(np.load(path + '/x.npy'), jax.devices('cpu')[0])
-    y = jax.device_put(np.load(path +'/y.npy'), jax.devices('cpu')[0])
+    def __init__(self, x_train, y_train, x_test, y_test):
+        self.x_train = x_train
+        self.y_train = y_train
+        self.x_test = x_test
+        self.y_test = y_test
+        self.x_all = np.concatenate([self.x_train, self.x_test])
+        self.y_all = np.concatenate([self.y_train, self.y_test])
     
-    ids = np.arange(0, len(x))
-    ids = jax.random.permutation(rng, ids)
-    
-    x = x[ids]
-    y = y[ids]
-    
-    y = jax.nn.one_hot(y, num_classes)
+    @staticmethod
+    def load(dataset_name, rng, test_size = 0.1, num_classes = 4):
+        """
+        Loads the dataset to memory, already shuffled and split into train and test.
+        """
 
-    split_point = int(test_size * len(x))
+        x = jax.device_put(np.load(dataset_name + '/x.npy'), jax.devices('cpu')[0])
+        y = jax.device_put(np.load(dataset_name +'/y.npy'), jax.devices('cpu')[0])
+        
+        ids = np.arange(0, len(x))
+        ids = jax.random.permutation(rng, ids)
+        
+        x = x[ids]
+        y = y[ids]
+        
+        y = jax.nn.one_hot(y, num_classes)
 
-    x_test = x[0:split_point]
-    y_test = y[0:split_point]
+        split_point = int(test_size * len(x))
 
-    x_train = x[split_point:]
-    y_train = y[split_point:]
+        x_test = x[0:split_point]
+        y_test = y[0:split_point]
 
-    return (x_train, y_train), (x_test, y_test)
+        x_train = x[split_point:]
+        y_train = y[split_point:]
+
+        return Dataset(x_train, y_train, x_test, y_test)
 
 
 def shard_array(array):
@@ -46,10 +63,9 @@ def get_datagen(parallel, batch_size, X, Y = None, include_last = False):
     """
 
     # Finds the correct number of batches
-    num_batches = len(X) // batch_size           
-    if include_last:
+    num_batches = X.shape[0] // batch_size         
+    if False: # ! TEMP: if include_last:
         num_batches += 1
-
 
     def datagen():
         """Data generator"""
@@ -60,9 +76,9 @@ def get_datagen(parallel, batch_size, X, Y = None, include_last = False):
             # Get a batch of X.
             # If parallelization is used, shard the batch between all devices. If not, place it in the first device.
             x = X[i * batch_size: (i+1) * batch_size]
+
             x = shard_array(x) if parallel else jax.device_put(x, jax.local_devices()[0])
 
-                
             # If we are also iterating through Y, gets the corresponging batch
             if Y is not None:
                 y = Y[i * batch_size: (i+1) * batch_size]
