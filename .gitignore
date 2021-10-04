@@ -12,3 +12,7 @@ kaggle.json
 COVID-19_Radiography_Dataset/
 *.png
 **/*.png
+covidx/
+mendeley/
+output/
+tawsifur/
