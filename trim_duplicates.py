@@ -1,5 +1,5 @@
 import numpy as np
-import data
+import dataset
 import jax.numpy as jnp
 import jax
 from dataset import Dataset

@@ -18,8 +18,41 @@ class Dataset:
         self.x_all = np.concatenate([self.x_train, self.x_test])
         self.y_all = np.concatenate([self.y_train, self.y_test])
     
+    def five_fold(self, i):
+        assert i >= 0 and i <= 4
+        ds_size = self.x_all.shape[0]
+        split_size = int(ds_size / 5)
+        assert split_size > 5
+
+        start = split_size*i
+        end = split_size*(i+1)
+        fold_x_test = self.x_all[start:end]
+        fold_y_test = self.y_all[start:end]
+
+        x_train_first_part = self.x_all[:start] if start > 0 else np.array([])
+        x_train_second_part = self.x_all[end:] if end < ds_size else np.array([])
+
+        y_train_first_part = self.y_all[:start] if start > 0 else np.array([])
+        y_train_second_part = self.y_all[end:] if end < ds_size else np.array([])
+
+        if start <= 0:
+            fold_x_train = x_train_second_part
+            fold_y_train = y_train_second_part
+        elif end >= ds_size:
+            fold_x_train = x_train_first_part
+            fold_y_train = y_train_first_part
+        else:
+            fold_x_train = np.concatenate([x_train_first_part, x_train_second_part])
+            fold_y_train = np.concatenate([y_train_first_part, y_train_second_part])
+        
+        assert fold_x_train.shape[0] <= split_size * 5 and fold_x_train.shape[0] >= split_size * 4
+        assert fold_y_train.shape[0] <= split_size * 5 and fold_y_train.shape[0] >= split_size * 4
+        assert fold_x_test.shape[0] == split_size and fold_y_test.shape[0] == split_size
+
+        return Dataset(fold_x_train, fold_y_train, fold_x_test, fold_y_test)
+
     @staticmethod
-    def load(dataset_name, rng, test_size = 0.1, num_classes = 4):
+    def load(dataset_name, rng, test_size = 0.2, num_classes = 4):
         """
         Loads the dataset to memory, already shuffled and split into train and test.
         """
