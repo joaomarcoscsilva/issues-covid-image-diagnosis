@@ -77,4 +77,4 @@ def remove_duplicates(dataset, sims, threshold=0.99):
     x_test_curated = dataset.x_test[keep_test]
     y_test_curated = dataset.y_test[keep_test]
 
-    return Dataset(x_train_curated, y_train_curated, x_test_curated, y_test_curated)
+    return Dataset(x_train_curated, y_train_curated, x_test_curated, y_test_curated, dataset.name + "_curated")

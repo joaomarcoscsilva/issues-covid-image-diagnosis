@@ -9,14 +9,16 @@ class Dataset:
     y_test: np.array
     x_all: np.array
     y_all: np.array
+    name: str
 
-    def __init__(self, x_train, y_train, x_test, y_test):
+    def __init__(self, x_train, y_train, x_test, y_test, name):
         self.x_train = x_train
         self.y_train = y_train
         self.x_test = x_test
         self.y_test = y_test
         self.x_all = np.concatenate([self.x_train, self.x_test])
         self.y_all = np.concatenate([self.y_train, self.y_test])
+        self.name = name
     
     def five_fold(self, i):
         assert i >= 0 and i <= 4
@@ -49,7 +51,7 @@ class Dataset:
         assert fold_y_train.shape[0] <= split_size * 5 and fold_y_train.shape[0] >= split_size * 4
         assert fold_x_test.shape[0] == split_size and fold_y_test.shape[0] == split_size
 
-        return Dataset(fold_x_train, fold_y_train, fold_x_test, fold_y_test)
+        return Dataset(fold_x_train, fold_y_train, fold_x_test, fold_y_test, self.name)
 
     @staticmethod
     def load(dataset_name, rng, test_size = 0.2, num_classes = 4):
@@ -76,7 +78,7 @@ class Dataset:
         x_train = x[split_point:]
         y_train = y[split_point:]
 
-        return Dataset(x_train, y_train, x_test, y_test)
+        return Dataset(x_train, y_train, x_test, y_test, dataset_name)
 
 
 def shard_array(array):

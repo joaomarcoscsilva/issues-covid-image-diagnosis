@@ -1,0 +1,89 @@
+
+Starting CV1 from group basemodel_mendeley_CrossValidation
+tcmalloc: large alloc 7241465856 bytes == 0x15aa2bc000 @  0x7f2888788680 0x7f28887a9824 0x7f28887a9b8a 0x7f2660c946b7 0x7f265b98b790 0x7f265b99a414 0x7f265b99d287 0x7f265b8e8f0f 0x7f265b65abe8 0x7f265b647166 0x5f5db9 0x5f698e 0x50b4c7 0x570e46 0x56a0ba 0x5f70bb 0x66600d 0x5f574e 0x56d5f6 0x56a0ba 0x5f6343 0x5f70f7 0x66600d 0x5f574e 0x56d5f6 0x5f6166 0x56bf09 0x56a0ba 0x5f6343 0x50ad7c 0x5f56c7
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  8.49it/s, loss=1.81, acc=0.35, val_loss=1.33, val_acc=0.34]
+
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  8.34it/s, loss=1.30, acc=0.36, val_loss=1.31, val_acc=0.34]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.50it/s, loss=1.20, acc=0.41, val_loss=1.12, val_acc=0.49]
+
+
+100%|█████████████████████████████████| 57/57 [00:05<00:00,  9.56it/s, loss=0.91, acc=0.63, val_loss=0.76, val_acc=0.69]
+
+
+
+100%|█████████████████████████████████| 57/57 [00:07<00:00,  7.46it/s, loss=0.69, acc=0.72, val_loss=0.65, val_acc=0.73]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.27it/s, loss=0.59, acc=0.76, val_loss=0.57, val_acc=0.76]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.27it/s, loss=0.53, acc=0.78, val_loss=0.52, val_acc=0.78]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.30it/s, loss=0.48, acc=0.80, val_loss=0.50, val_acc=0.79]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.49it/s, loss=0.46, acc=0.81, val_loss=0.49, val_acc=0.79]
+
+100%|█████████████████████████████████| 57/57 [00:05<00:00, 10.49it/s, loss=0.43, acc=0.82, val_loss=0.46, val_acc=0.81]
+
+
+100%|█████████████████████████████████| 57/57 [00:05<00:00,  9.74it/s, loss=0.41, acc=0.83, val_loss=0.47, val_acc=0.81]
+
+
+100%|█████████████████████████████████| 57/57 [00:05<00:00,  9.65it/s, loss=0.40, acc=0.83, val_loss=0.47, val_acc=0.81]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.30it/s, loss=0.39, acc=0.84, val_loss=0.43, val_acc=0.83]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  8.94it/s, loss=0.37, acc=0.84, val_loss=0.43, val_acc=0.83]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.26it/s, loss=0.35, acc=0.85, val_loss=0.44, val_acc=0.83]
+
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.40it/s, loss=0.34, acc=0.86, val_loss=0.46, val_acc=0.82]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.00it/s, loss=0.33, acc=0.86, val_loss=0.44, val_acc=0.82]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.08it/s, loss=0.32, acc=0.87, val_loss=0.46, val_acc=0.82]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.14it/s, loss=0.30, acc=0.88, val_loss=0.49, val_acc=0.82]
+
+
+100%|█████████████████████████████████| 57/57 [00:05<00:00, 10.07it/s, loss=0.28, acc=0.89, val_loss=0.49, val_acc=0.82]
+
+
+100%|█████████████████████████████████| 57/57 [00:05<00:00,  9.62it/s, loss=0.25, acc=0.90, val_loss=0.46, val_acc=0.83]
+
+
+100%|█████████████████████████████████| 57/57 [00:06<00:00,  9.09it/s, loss=0.22, acc=0.91, val_loss=0.43, val_acc=0.84]
+
+
+
+100%|██████████████████████████████████████████████████████████████| 57/57 [00:05<00:00, 10.02it/s, loss=0.14, acc=0.95]
+Exception in thread Thread-18:
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.8/threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/Pedro/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 215, in check_status
+    status_response = self._interface.communicate_stop_status()
+  File "/home/Pedro/.local/lib/python3.8/site-packages/wandb/sdk/interface/interface.py", line 737, in communicate_stop_status
+    resp = self._communicate(req, timeout=timeout, local=True)
+  File "/home/Pedro/.local/lib/python3.8/site-packages/wandb/sdk/interface/interface.py", line 539, in _communicate
+    return self._communicate_async(rec, local=local).get(timeout=timeout)
+  File "/home/Pedro/.local/lib/python3.8/site-packages/wandb/sdk/interface/interface.py", line 544, in _communicate_async
+    raise Exception("The wandb backend process has shutdown")

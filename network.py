@@ -5,6 +5,7 @@ import optax
 from tqdm import tqdm
 import dataset
 import wandb
+from wandb import Table
 import utils
 from sklearn.metrics import confusion_matrix
 from IPython import embed
@@ -157,7 +158,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         return np.array(losses).mean(), np.array(accs).mean(), jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
 
     
-    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, log_wandb = True, class_names = utils.CLASS_NAMES):
+    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, wandb_run = None, class_names = utils.CLASS_NAMES):
         """
         Trains the neural network for an epoch.
         If x_test and y_test are passed, evaluates after training.
@@ -188,8 +189,8 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                 losses.append(_loss)
                 accs.append(_acc)
                 
-                if log_wandb:
-                    wandb.log({'loss': float(_loss), 'acc': float(_acc)})
+                if not wandb_run is None:
+                    wandb_run.log({'loss': float(_loss), 'acc': float(_acc)})
 
             # If available, evaluates on the test set
             if x_test is not None and y_test is not None:
@@ -197,9 +198,9 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                 bar.set_postfix({'loss' : '%.2f' % np.array(losses).mean(), 'acc' : '%.2f' % np.array(accs).mean(), 'val_loss' : '%.2f' % loss, 'val_acc' : '%.2f' % acc})
                 conf_matrix = confusion_matrix(y_true = y_test[0:len(logits)].argmax(1), y_pred = logits.argmax(1), normalize = 'true')
 
-                if log_wandb:
-                    wandb.log({'val_loss': float(loss), 'val_acc': float(acc), 'val_confusion' : 
-                        wandb.Table(data = conf_matrix, columns = class_names, rows = class_names)})
+                if not wandb_run is None:
+                    wandb_run.log({'val_loss': float(loss), 'val_acc': float(acc), 'val_confusion' : 
+                        Table(data = conf_matrix, columns = class_names, rows = class_names)})
 
         # Returns the new parameters and state
         return params, state, optim_state

@@ -1,0 +1,2206 @@
+2021-10-18 18:14:19,506 INFO    MainThread:1005603 [wandb_setup.py:_flush():69] setting env: {}
+2021-10-18 18:14:19,506 INFO    MainThread:1005603 [wandb_setup.py:_flush():69] setting login settings: {}
+2021-10-18 18:14:19,506 INFO    MainThread:1005603 [wandb_init.py:_log_setup():357] Logging user logs to /home/Pedro/xray_duplicates_detector/wandb/run-20211018_181419-gdbmf00c/logs/debug.log
+2021-10-18 18:14:19,506 INFO    MainThread:1005603 [wandb_init.py:_log_setup():358] Logging internal logs to /home/Pedro/xray_duplicates_detector/wandb/run-20211018_181419-gdbmf00c/logs/debug-internal.log
+2021-10-18 18:14:19,506 INFO    MainThread:1005603 [wandb_init.py:_jupyter_setup():307] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x7f2857f86b80>
+2021-10-18 18:14:19,507 INFO    MainThread:1005603 [wandb_init.py:init():390] calling init triggers
+2021-10-18 18:14:19,507 INFO    MainThread:1005603 [wandb_init.py:init():395] wandb.init called with sweep_config: {}
+config: {'dataset': 'mendeley', 'random_seed': 12, 'batch_size': 128, 'resolution': 256}
+2021-10-18 18:14:19,507 INFO    MainThread:1005603 [wandb_init.py:init():435] starting backend
+2021-10-18 18:14:19,507 INFO    MainThread:1005603 [backend.py:_multiprocessing_setup():70] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2021-10-18 18:14:19,932 INFO    MainThread:1005603 [backend.py:ensure_launched():135] starting backend process...
+2021-10-18 18:14:20,276 INFO    MainThread:1005603 [backend.py:ensure_launched():139] started backend process with pid: 1010170
+2021-10-18 18:14:20,278 INFO    MainThread:1005603 [wandb_init.py:init():440] backend started and connected
+2021-10-18 18:14:20,297 INFO    MainThread:1005603 [wandb_run.py:_label_probe_notebook():833] probe notebook
+2021-10-18 18:14:20,298 INFO    MainThread:1005603 [wandb_run.py:_label_probe_notebook():843] Unable to probe notebook: 'NoneType' object has no attribute 'get'
+2021-10-18 18:14:20,298 INFO    MainThread:1005603 [wandb_init.py:init():499] updated telemetry
+2021-10-18 18:14:20,300 INFO    MainThread:1005603 [wandb_init.py:init():522] communicating current version
+2021-10-18 18:14:21,543 INFO    MainThread:1005603 [wandb_init.py:init():527] got version response 
+2021-10-18 18:14:21,543 INFO    MainThread:1005603 [wandb_init.py:init():535] communicating run to backend with 30 second timeout
+2021-10-18 18:14:21,750 INFO    MainThread:1005603 [wandb_init.py:init():562] starting run threads in backend
+2021-10-18 18:14:23,073 INFO    MainThread:1005603 [wandb_run.py:_console_start():1651] atexit reg
+2021-10-18 18:14:23,073 INFO    MainThread:1005603 [wandb_run.py:_redirect():1525] redirect: SettingsConsole.WRAP
+2021-10-18 18:14:23,074 INFO    MainThread:1005603 [wandb_run.py:_redirect():1562] Wrapping output streams.
+2021-10-18 18:14:23,075 INFO    MainThread:1005603 [wandb_run.py:_redirect():1586] Redirects installed.
+2021-10-18 18:14:23,075 INFO    MainThread:1005603 [wandb_init.py:init():587] run started, returning control to user process
+2021-10-18 18:18:32,336 INFO    MainThread:1005603 [wandb_run.py:finish():1311] finishing run usp-covid-xrays/xrays/gdbmf00c
+2021-10-18 18:18:32,367 INFO    MainThread:1005603 [jupyter.py:save_history():428] not saving jupyter history
+2021-10-18 18:18:32,367 INFO    MainThread:1005603 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2021-10-18 18:18:32,368 INFO    MainThread:1005603 [wandb_init.py:_jupyter_teardown():289] cleaning up jupyter logic
+2021-10-18 18:18:32,368 INFO    MainThread:1005603 [wandb_run.py:_atexit_cleanup():1621] got exitcode: 0
+2021-10-18 18:18:32,368 INFO    MainThread:1005603 [wandb_run.py:_restore():1593] restore
+2021-10-18 18:18:33,187 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 1
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 7169852
+  total_bytes: 1073532395
+}
+
+2021-10-18 18:18:33,422 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 1
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 24995644
+  total_bytes: 1073532395
+}
+
+2021-10-18 18:18:33,914 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 52078396
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,017 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 59098940
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,120 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 63502470
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,223 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 69580934
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,325 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 73775238
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,428 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 80042118
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,530 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 86374534
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,633 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 90568838
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,735 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 94771334
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,838 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 101038214
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:34,941 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 105601158
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,044 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 111499398
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,147 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 116078726
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,250 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 121960582
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,352 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 126228614
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,455 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 130422918
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,558 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 134625414
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,661 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 138762374
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,764 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 145086598
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,866 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 151353478
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:35,969 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 154228870
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,072 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 159783046
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,174 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 166082694
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,277 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 170457222
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,379 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 176543878
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,482 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 180746374
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,584 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 187013254
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,687 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 191207558
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,789 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 197539974
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,892 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 201676934
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:36,995 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 205871238
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,097 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 210073734
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,199 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 214014086
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,302 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 220600454
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,405 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 225794182
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,507 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 231061638
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,609 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 234485894
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,712 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 241014918
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,815 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 245725318
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:37,917 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 249927814
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,020 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 256260230
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,122 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 260454534
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,225 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 264591494
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,327 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 270915718
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,430 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 275118214
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,533 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 279312518
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,635 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 285579398
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,738 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 289781894
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,840 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 293460102
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:38,942 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 298178694
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,045 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 304445574
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,147 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 308639878
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,250 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 312842374
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,352 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 319174790
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,455 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 323303558
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,558 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 329635974
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,660 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 333830278
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,763 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 340097158
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,865 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 340097158
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:39,967 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 344365190
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,069 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 348493958
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,172 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 354760838
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,274 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 358963334
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,377 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 361093254
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,479 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 365295750
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,582 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 367360134
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,684 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 371554438
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,787 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 377886854
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,889 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 382728326
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:40,992 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 388610182
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,095 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 398039174
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,197 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 403077254
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,299 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 415611014
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,402 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 420583558
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,504 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 430274694
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,607 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 438671494
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,709 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 447068294
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,812 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 457595014
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:41,914 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 466450566
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,017 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 474331270
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,119 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 478787718
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,222 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 490338438
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,324 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 501586054
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,426 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 509466758
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,529 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 522582150
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,632 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 529168518
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,734 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 542472326
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,837 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 554039430
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:42,939 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 561600646
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,042 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 575027334
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,145 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 583366790
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,247 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 594409606
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,350 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 605714566
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,453 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 614881414
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,556 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 627415174
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,658 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 640014470
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,761 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 647141510
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,864 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 657062022
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:43,967 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 667015302
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,070 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 684062854
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,173 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 692738182
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,276 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 704993414
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,379 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 717846662
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,482 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 726505606
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,584 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 740972678
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,687 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 746977414
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,790 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 753244294
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,892 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 757446790
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:44,995 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 761706630
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,097 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 765065350
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,200 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 770037894
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,302 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 774240390
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,405 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 778033286
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,507 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 784423046
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,610 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 788904070
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,712 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 792844422
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,815 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 796784774
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:45,917 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 801495174
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,020 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 805697670
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,122 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 809891974
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,224 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 816224390
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,327 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 818296966
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,429 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 824621190
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,532 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 828758150
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,634 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 832952454
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,736 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 837154950
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,839 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 840308870
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:46,941 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 847681670
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,044 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 849754246
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,146 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 856012934
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,248 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 860215430
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,351 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 863959174
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,453 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 868612230
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,556 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 872814726
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,658 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 877009030
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,760 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 883341446
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,863 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 887470214
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:47,965 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 891672710
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,068 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 895875206
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,170 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 900069510
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,273 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 904272006
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,375 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 908466310
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,478 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 912668806
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,581 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 916797574
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,683 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 920615046
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,785 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 925259910
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,888 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 930363526
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:48,991 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 935729286
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,093 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 939923590
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,196 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 946190470
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,299 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 950392966
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,401 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 952457350
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,503 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 956717190
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,606 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 960854150
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,708 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 967186566
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,811 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 969250950
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:49,913 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 971380870
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,016 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 975583366
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,118 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 979777670
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,221 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 983914630
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,325 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 988108934
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,428 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 992376966
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,530 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 996571270
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,632 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1000708230
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,735 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1005123718
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,838 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1009490054
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:50,940 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1015371910
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,043 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1019631750
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,145 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1023768710
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,248 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1027971206
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,350 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1032231046
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,455 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1036368006
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,557 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1042626694
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,660 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1044764806
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,763 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1051023494
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,865 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1055225990
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:51,968 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1059428486
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,071 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1062844550
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,173 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1067882630
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,276 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1072085126
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,378 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,481 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,583 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,684 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,786 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,888 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:52,989 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,091 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,192 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,294 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,396 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,498 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,599 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,737 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+
+2021-10-18 18:18:53,969 INFO    MainThread:1005603 [wandb_run.py:_wait_for_finish():1746] got exit ret: done: true
+exit_result {
+}
+file_counts {
+  wandb_count: 5
+  media_count: 30
+  artifact_count: 30
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 1073545013
+  total_bytes: 1073545013
+}
+local_info {
+}
+
+2021-10-18 18:18:55,326 INFO    MainThread:1005603 [wandb_run.py:_append_history():1959] rendering history
+2021-10-18 18:18:55,326 INFO    MainThread:1005603 [wandb_run.py:_append_summary():1914] rendering summary
+2021-10-18 18:18:55,326 INFO    MainThread:1005603 [wandb_run.py:_append_files():2009] logging synced files
