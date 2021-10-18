@@ -1,9 +1,13 @@
 from typing import Callable, NamedTuple
-import numpy as np
+from jax import numpy as np
 import jax
 import optax
 from tqdm import tqdm
 import dataset
+import wandb
+import utils
+from sklearn.metrics import confusion_matrix
+from IPython import embed
 
 class NetworkContainer(NamedTuple):
     init_fn: Callable
@@ -55,7 +59,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         loss = optax.softmax_cross_entropy(logits = logits, labels = y).mean()
         acc = (logits.argmax(1) == y.argmax(1)).mean()
 
-        return loss, (acc, state)
+        return loss, (acc, state, logits)
     
     
 
@@ -72,7 +76,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         """
 
         # Calculate the gradient of the loss function in the batch, together with metrics and the new network state
-        (loss, (acc, state)), grad = grad_fn(params, state, x, y, training = True)
+        (loss, (acc, state, pred)), grad = grad_fn(params, state, x, y, training = True)
 
         # If using parallelization, aggregates the gradient and state from all devices
         if parallel:
@@ -128,7 +132,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         """
         Applies the neural network in batches to every example in X and Y, returing the average loss and accuracy.
         """
-        
+
         # Chooses the correct loss function depending on parallelization
         _loss_fn = p_loss_fn if parallel else loss_fn
         
@@ -138,26 +142,29 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         # Lists with all the metrics
         losses = []
         accs = []
+        preds = []
 
         # Calculates the metrics for each batch
         for x, y in tqdm(datagen(), ncols = 120, total = num_batches, disable = not verbose):
-            loss, (acc, _) = _loss_fn(params, state, x, y, training)
+            loss, (acc, _, pred) = _loss_fn(params, state, x, y, training)
             losses.append(loss)
             accs.append(acc)
+
+            pred = pred.reshape(-1, *pred.shape[2:])
+            preds.append(jax.device_put(pred, jax.devices('cpu')[0]))
         
         # Returns the average results
-        return np.array(losses).mean(), np.array(accs).mean()
+        return np.array(losses).mean(), np.array(accs).mean(), jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
 
     
-    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True):
+    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, log_wandb = True, class_names = utils.CLASS_NAMES):
         """
         Trains the neural network for an epoch.
         If x_test and y_test are passed, evaluates after training.
         """
-
+        
         # Gets a data generator for the dataset
         datagen, num_batches = dataset.get_datagen(parallel, batch_size, x_train, y_train, include_last = False)
-
         
         # Creates a progress bar for the epoch
         with tqdm(None, ncols = 120, total = num_batches, disable = not verbose) as bar:
@@ -165,10 +172,10 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
             # Lists with all the metrics for training
             losses = []
             accs = []
-
+            
             # Iterates the training set
             for x, y in datagen():
-
+                
                 # Performs the training step
                 params, state, optim_state, _loss, _acc = update(params, state, optim_state, x, y)
                 _loss, _acc = _loss.mean(), _acc.mean()
@@ -180,12 +187,19 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                 # Saves the calculated metrics
                 losses.append(_loss)
                 accs.append(_acc)
-
+                
+                if log_wandb:
+                    wandb.log({'loss': float(_loss), 'acc': float(_acc)})
 
             # If available, evaluates on the test set
             if x_test is not None and y_test is not None:
-                loss, acc = evaluate(params, state, x_test, y_test, verbose = False)
+                loss, acc, logits = evaluate(params, state, x_test, y_test, verbose = False)
                 bar.set_postfix({'loss' : '%.2f' % np.array(losses).mean(), 'acc' : '%.2f' % np.array(accs).mean(), 'val_loss' : '%.2f' % loss, 'val_acc' : '%.2f' % acc})
+                conf_matrix = confusion_matrix(y_true = y_test[0:len(logits)].argmax(1), y_pred = logits.argmax(1), normalize = 'true')
+
+                if log_wandb:
+                    wandb.log({'val_loss': float(loss), 'val_acc': float(acc), 'val_confusion' : 
+                        wandb.Table(data = conf_matrix, columns = class_names, rows = class_names)})
 
         # Returns the new parameters and state
         return params, state, optim_state

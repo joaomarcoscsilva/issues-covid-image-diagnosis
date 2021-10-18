@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import resnet
 import haiku as hk
 import optax
+from tqdm import tqdm
+import wandb
 
 class ModelContainer(NamedTuple):
     name: str
@@ -41,7 +43,7 @@ def init_net_and_optim(x_train, num_classes, batch_size):
 def get_persistent_fields(model):
     return (model.name, model.params, model.state, model.optim_state)
 
-def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42)) -> ModelContainer:
+def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, log_wandb = True, class_names = utils.CLASS_NAMES) -> ModelContainer:
     """Trains the network specified at net_container, in the given dataset.
        If models/name exists, returns the cached version. Otherwise, trains the model then saves it to model/name.
 
@@ -60,17 +62,30 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             return ModelContainer(*loaded_model, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
 
     params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
-
+    
     # Train the model for N epochs on the dataset
     for _ in range(num_epochs):
-        params, state, optim_state = net_container.train_epoch(params, state, optim_state, x_train_proc,
-                                                               dataset.y_train, x_test_proc, dataset.y_test)
+        
+        if masks is not None:
+            _masks = masks[jax.random.choice(rng, len(masks), (len(x_train_proc),))]
+            rng = jax.random.split(rng)[0]
+            _x_train = x_train_proc * _masks
+        else:
+            _x_train = x_train_proc
+            
+        params, state, optim_state = net_container.train_epoch(params, state, optim_state, _x_train,
+                                                               dataset.y_train, x_test_proc, dataset.y_test,
+                                                               log_wandb = log_wandb, class_names = class_names)
+        
     
     model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
     
     with open(dst_path, "wb") as f:
         print("Model saved to", dst_path)
         pickle.dump(get_persistent_fields(model), f)
+
+    if log_wandb:
+        wandb.save(dst_path)
 
     return model
 

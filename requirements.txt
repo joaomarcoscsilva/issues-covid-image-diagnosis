@@ -4,4 +4,4 @@ opencv_python==4.5.3.56
 optax==0.0.9
 tqdm==4.62.0
 numpy==1.19.5
-haiku==0.01
+dm-haiku==0.01
