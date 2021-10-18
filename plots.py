@@ -11,6 +11,13 @@ def confusion_matrix(dataset, y_test_pred, title):
                 yticklabels = utils.CLASS_NAMES).set(title = title)
     plt.show()
 
+def heatmatrix(matrix, title):
+    sns.heatmap(matrix,
+                annot = True,
+                xticklabels = utils.CLASS_NAMES,
+                yticklabels = utils.CLASS_NAMES).set(title = title)
+    plt.show()
+
 def compare_images(images_a, images_b, rows):
     fig = plt.figure(figsize=(32, 24))
 
