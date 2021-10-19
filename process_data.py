@@ -6,6 +6,7 @@ import numpy as np
 import jax
 from glob import glob
 from multiprocessing import cpu_count, Pool
+import utils
 
 # Because the dataset is very large, set jax to use CPU memory by default
 jax.config.update('jax_platform_name', 'cpu')
@@ -45,8 +46,8 @@ def load_data(data_dir):
     """
     Loads all images in a directory to memory in parallel, using the functions above
     """
-
-    classes = glob(data_dir + '/*/')
+    # TODO: fix lung_Opacity here
+    classes = utils.CLASS_NAMES
     all_images = []
     for cls in classes:
         images = glob(cls + '/*')
