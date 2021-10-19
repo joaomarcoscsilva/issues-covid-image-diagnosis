@@ -1,21 +1,20 @@
 import seaborn as sns
 import sklearn.metrics
-import utils
 import matplotlib.pyplot as plt
 import math
 
-def confusion_matrix(dataset, y_test_pred, title):
+def confusion_matrix(dataset, y_test_pred, title, classnames):
     sns.heatmap(sklearn.metrics.confusion_matrix(dataset.y_test[0:y_test_pred.shape[0],].argmax(1), y_test_pred.argmax(1), normalize = 'true'),
                 annot = True,
-                xticklabels = utils.CLASS_NAMES,
-                yticklabels = utils.CLASS_NAMES).set(title = title)
+                xticklabels = classnames,
+                yticklabels = classnames).set(title = title)
     plt.show()
 
-def heatmatrix(matrix, title):
+def heatmatrix(matrix, title, classnames):
     sns.heatmap(matrix,
                 annot = True,
-                xticklabels = utils.CLASS_NAMES,
-                yticklabels = utils.CLASS_NAMES).set(title = title)
+                xticklabels = classnames,
+                yticklabels = classnames).set(title = title)
     plt.show()
 
 def compare_images(images_a, images_b, rows):

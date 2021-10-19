@@ -6,7 +6,6 @@ from tqdm import tqdm
 import dataset
 import wandb
 from wandb import Table
-import utils
 from sklearn.metrics import confusion_matrix
 from IPython import embed
 
@@ -158,7 +157,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         return np.array(losses).mean(), np.array(accs).mean(), jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
 
     
-    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, wandb_run = None, class_names = utils.CLASS_NAMES):
+    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, wandb_run = None, class_names = None):
         """
         Trains the neural network for an epoch.
         If x_test and y_test are passed, evaluates after training.

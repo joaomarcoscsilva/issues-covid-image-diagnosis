@@ -11,7 +11,6 @@ from tqdm import tqdm
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
-import utils
 
 # Given two matrices of shapes [n, dim] and [m, dim], returns a matrix [n, m] with all cosine similarities between the vectors
 
@@ -36,7 +35,7 @@ def compute_similarities(dataset, net_container, trained_model):
     sims = sims - np.eye(sims.shape[0])
     return sims
 
-def plot_similarities(dataset, sims, threshold=0.99):
+def plot_similarities(dataset, sims, classnames, threshold=0.99):
     # Plots distribution of maximum similarity
     first_fig, axs = plt.subplots(1, 2, figsize = (15,5))
     
@@ -45,7 +44,7 @@ def plot_similarities(dataset, sims, threshold=0.99):
 
     # Plots 'duplicates' according to threshold
     plt.title('Images with similarity greater than ' + str(threshold) + ' in each class')
-    pd.Series(dataset.y_all[:sims.shape[0],][max_sim > threshold].argmax(1)).map(dict(zip(range(len(utils.CLASS_NAMES)), utils.CLASS_NAMES))).hist()
+    pd.Series(dataset.y_all[:sims.shape[0],][max_sim > threshold].argmax(1)).map(dict(zip(range(len(classnames)), classnames))).hist()
     first_fig.show()
 
 def remove_duplicates(dataset, sims, threshold=0.99):
@@ -77,4 +76,5 @@ def remove_duplicates(dataset, sims, threshold=0.99):
     x_test_curated = dataset.x_test[keep_test]
     y_test_curated = dataset.y_test[keep_test]
 
-    return Dataset(x_train_curated, y_train_curated, x_test_curated, y_test_curated, dataset.name + "_curated")
+    return Dataset(x_train_curated, y_train_curated, x_test_curated, y_test_curated,
+                    dataset.name + "_curated", dataset.classnames)
