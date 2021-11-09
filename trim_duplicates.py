@@ -83,7 +83,7 @@ def plot_similarities(dataset, sims, threshold, wandb_run):
     plots.compare_images(dataset.x_all[indices], dataset.x_all[max_sims_index[indices]], rows=10)
     plots.wandb_log_img(wandb_run, "Images closest to threshold")
 
-def remove_duplicates(prefix, dataset, sims, wandb_run=None):
+def remove_duplicates(suffix, dataset, sims, wandb_run=None):
     # THRESH ALGORITHM START
     max_sim = sims.max(0)
     step = 0.001
@@ -160,16 +160,16 @@ def remove_duplicates(prefix, dataset, sims, wandb_run=None):
 
     if wandb_run is not None:
         dup_data = DuplicatesData(dataset.rng, duplicate_groups)
-        fname = "dup_data/" + prefix + wandb_run.name + ".pickle"
+        fname = "dup_data/" + wandb_run.name + suffix + ".pickle"
         dup_data.save(fname)
         wandb_run.save(fname)
 
         wandb_run.log({
-            prefix + 'unique_images' : len(duplicate_groups),
-            prefix + 'removed_images' : dup_count,
-            prefix + 'test_duplicates' : num_test_duplicates,
-            prefix + 'train_duplicates:' : num_train_duplicates,
-            prefix + 'leaked_duplicates' : num_leaked_duplicates
+            'unique_images' + suffix: len(duplicate_groups),
+            'removed_images' + suffix: dup_count,
+            'test_duplicates' + suffix: num_test_duplicates,
+            'train_duplicates:' + suffix: num_train_duplicates,
+            'leaked_duplicates' + suffix: num_leaked_duplicates
         })
 
     assert np.all(dataset.x_all[0:len(dataset.x_test)] == dataset.x_test), "Something is very very very wrong."
