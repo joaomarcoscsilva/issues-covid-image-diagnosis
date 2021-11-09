@@ -1,3 +1,4 @@
+from pydoc import classname
 from typing import Mapping, NamedTuple
 import numpy as np
 import jax.numpy as jnp
@@ -63,7 +64,7 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
     params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
     
     # Train the model for N epochs on the dataset
-    for _ in range(num_epochs):
+    for epoch_i in range(num_epochs):
         
         if masks is not None:
             _masks = masks[jax.random.choice(rng, len(masks), (len(x_train_proc),))]
@@ -74,7 +75,8 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             
         params, state, optim_state = net_container.train_epoch(params, state, optim_state, _x_train,
                                                                dataset.y_train, x_test_proc, dataset.y_test,
-                                                               wandb_run = wandb_run, class_names = dataset.classnames)
+                                                               wandb_run = wandb_run, classnames = dataset.classnames,
+                                                               final_epoch=epoch_i == num_epochs-1)
         
     
     model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)

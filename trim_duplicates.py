@@ -42,25 +42,28 @@ min_duplicates = 50
 min_tol = 0.06
 min_thresh = 0.95
 
-def plot_similarities(dataset, sims, threshold=0.99):
+def plot_similarities(dataset, sims, threshold, wandb_run):
     # Plots distribution of maximum similarity
-    first_fig, axs = plt.subplots(1, 2, figsize = (15,5))
+    fig, axs = plt.subplots(1, 2, figsize = (15,5))
     
     max_sim = sims.max(0)
-    sns.histplot(max_sim[max_sim > min_thresh], ax = axs[0]).set(title = 'Distribution of the maximum similarity for the images in the dataset')
+    ax = sns.histplot(max_sim[max_sim > min_thresh], ax = axs[0])
+    ax.set(title = 'Distribution of the maximum similarity for the images in the dataset')
+    _ = ax.vlines(x=threshold, colors='purple', ls='dashed', ymin=0, ymax=ax.get_ylim()[1], label='duplicates threshold')
 
     # Plots 'duplicates' according to threshold
     plt.title('Images with similarity greater than ' + str(threshold) + ' in each class')
     pd.Series(dataset.y_all[:sims.shape[0],][max_sim > threshold].argmax(1)).map(dict(zip(range(len(dataset.classnames)), dataset.classnames))).hist()
-    first_fig.show()
+    plots.wandb_log_img(wandb_run, "Max similarity plot", fig=fig)
 
     max_sims = sims.max(axis=1) - threshold
     max_sims_index = sims.argmax(axis=1)
     mask = (max_sims >= 0) & (max_sims <= 0.0005)
     indices = np.where(mask)[0]
     plots.compare_images(dataset.x_all[indices], dataset.x_all[max_sims_index[indices]], rows=10)
+    plots.wandb_log_img(wandb_run, "Images closest to threshold")
 
-def remove_duplicates(dataset, sims):
+def remove_duplicates(dataset, sims, wandb_run=None):
     remove = set()
 
     # THRESH ALGORITHM START
@@ -86,8 +89,7 @@ def remove_duplicates(dataset, sims):
         
         thresh = edges[i]
 
-    plot_similarities(dataset, sims, threshold=thresh)
-    plt.show()
+    plot_similarities(dataset, sims, threshold=thresh, wandb_run=wandb_run)
 
     print("THRESH ALGORITHM OUTPUT", thresh)
     # THRESH ALGORITHM END
@@ -98,7 +100,7 @@ def remove_duplicates(dataset, sims):
         if i not in remove:
             remove = remove.union(set(list(np.nonzero(sims[i] > thresh)[0])))
 
-    print('trim_duplicates.remove_duplicates - Removed images:', len(remove), "({:.1f}%)".format(len(remove) / dataset.x_all.shape[0] * 100))
+    print('Trim_duplicates.remove_duplicates - Removed images:', len(remove), "({:.1f}%)".format(len(remove) / dataset.x_all.shape[0] * 100))
 
     # Finds the indices of the images that will not to be removed
     keep = set(range(len(dataset.x_all))).difference(remove)
