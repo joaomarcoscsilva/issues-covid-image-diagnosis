@@ -19,12 +19,10 @@ def heatmatrix(matrix, title, classnames):
     plt.show()
 
 def wandb_log_img(wandb_run, title, show=True, fig=None):
-    if wandb_run is None:
-        return
-    
-    wandb_run.log({
-        title: wandb.Image(plt.gcf()) if fig is None else wandb.Image(fig)
-    })
+    if wandb_run is not None:    
+        wandb_run.log({
+            title: wandb.Image(plt.gcf()) if fig is None else wandb.Image(fig)
+        })
 
     if show:
         if fig is None:
