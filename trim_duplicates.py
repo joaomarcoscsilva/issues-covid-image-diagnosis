@@ -14,8 +14,25 @@ import pandas as pd
 import scipy
 from scipy import stats
 import plots
+from dataclasses import dataclass
+import pickle
 
 # Given two matrices of shapes [n, dim] and [m, dim], returns a matrix [n, m] with all cosine similarities between the vectors
+
+@dataclass
+class DuplicatesData:
+    @staticmethod
+    def load(filepath):
+        with open(filepath, 'rb') as f:
+            return pickle.load(f)
+
+    rng: jax.random.PRNGKey
+    indices: jnp.array
+
+    def save(self, filepath):
+        with open(filepath, 'wb') as f:
+            pickle.dump(self, f)
+        
 
 @partial(jax.vmap, in_axes = (None, 0))
 @partial(jax.vmap, in_axes = (0, None))
@@ -23,12 +40,15 @@ import plots
 def cosine_similarity(x,y):
     return jnp.dot(x,y) / jnp.sqrt(jnp.dot(x,x) * jnp.dot(y,y))
 
-def compute_similarities(dataset, net_container, trained_model):
+def compute_similarities(dataset, net_container, trained_model, pixel_space):
     print("Calculating embeddings...")
 
-    # Finds the latent vectorsfor the entire dataset
-    embeddings = net_container.predict(trained_model.params, trained_model.state, dataset.x_all, return_representation = True)
-    embeddings = embeddings.reshape(embeddings.shape[0], -1)
+    if not pixel_space:
+        # Finds the latent vectors for the entire dataset
+        embeddings = net_container.predict(trained_model.params, trained_model.state, dataset.x_all, return_representation = True)
+        embeddings = embeddings.reshape(embeddings.shape[0], -1)
+    else:
+        embeddings = dataset.x_all.reshape(dataset.x_all.shape[0], -1)
 
     print("Computing cosine similarities...")
     # Finds the cosine similarity between all images in the dataset
@@ -63,9 +83,7 @@ def plot_similarities(dataset, sims, threshold, wandb_run):
     plots.compare_images(dataset.x_all[indices], dataset.x_all[max_sims_index[indices]], rows=10)
     plots.wandb_log_img(wandb_run, "Images closest to threshold")
 
-def remove_duplicates(dataset, sims, wandb_run=None):
-    remove = set()
-
+def remove_duplicates(prefix, dataset, sims, wandb_run=None):
     # THRESH ALGORITHM START
     max_sim = sims.max(0)
     step = 0.001
@@ -90,35 +108,82 @@ def remove_duplicates(dataset, sims, wandb_run=None):
         thresh = edges[i]
 
     plot_similarities(dataset, sims, threshold=thresh, wandb_run=wandb_run)
-
-    print("THRESH ALGORITHM OUTPUT", thresh)
     # THRESH ALGORITHM END
 
     # For each image not yet removed, add all of its duplicates to the removed set
+    
+    one_duplicate = set()
+    duplicate_groups = set()
 
     for i in tqdm(range(len(dataset.x_all))):
-        if i not in remove:
-            remove = remove.union(set(list(np.nonzero(sims[i] > thresh)[0])))
+        if i not in one_duplicate:
+            one_duplicate = one_duplicate.union(set(list(np.nonzero(sims[i] > thresh)[0])))
+        duplicate_groups.add(tuple(sorted(list(np.nonzero(sims[i] > thresh)[0]) + [i])))
+    
+    dup_count = len(dataset.x_all) - len(duplicate_groups)
+    
+    def tests_in_set(s):
+        amount = 0
+        for i in s:
+            if i < len(dataset.x_test):
+                amount += 1
+        return amount
 
-    print('Trim_duplicates.remove_duplicates - Removed images:', len(remove), "({:.1f}%)".format(len(remove) / dataset.x_all.shape[0] * 100))
+    def trains_in_set(s):
+        amount = 0
+        for i in s:
+            if i >= len(dataset.x_test):
+                amount += 1
+        return amount
 
-    # Finds the indices of the images that will not to be removed
-    keep = set(range(len(dataset.x_all))).difference(remove)
-    keep = np.array(list(keep))
+    def both_in_set(s):
+        amount = 0
+        train = False
+        test = False
+        for i in s:
+            if i < len(dataset.x_test):
+                test = True
+                amount += 1
+            else:
+                train = True
+        return amount if (train and test) else 0
 
-    # These indices are for the x_all and y_all arrays.
-    # The tensor x_all, for example, is the concatenation of x_test and x_train
+    num_test_duplicates = sum([tests_in_set(g) for g in duplicate_groups if len(g) > 1])
+    num_train_duplicates = sum([trains_in_set(g) for g in duplicate_groups if len(g) > 1])
+    num_leaked_duplicates = sum([both_in_set(g) for g in duplicate_groups if len(g) > 1])
 
-    # Converts keep indices to be used in the train and test tensors
-    keep_test = keep[keep < len(dataset.x_test)]
-    keep_train = keep[keep >= len(dataset.x_test)] - len(dataset.x_test)
+    print('Unique images:', len(duplicate_groups))
+    print('Removed images:', dup_count)
+    print('Duplicates found in test set:', num_test_duplicates)
+    print('Duplicates found in train set:', num_train_duplicates)
+    print('Leaked examples from the test set:', num_leaked_duplicates)
 
+    if wandb_run is not None:
+        dup_data = DuplicatesData(dataset.rng, duplicate_groups)
+        fname = "dup_data/" + prefix + wandb_run.name + ".pickle"
+        dup_data.save(fname)
+        wandb_run.save(fname)
+
+        wandb_run.log({
+            prefix + 'unique_images' : len(duplicate_groups),
+            prefix + 'removed_images' : dup_count,
+            prefix + 'test_duplicates' : num_test_duplicates,
+            prefix + 'train_duplicates:' : num_train_duplicates,
+            prefix + 'leaked_duplicates' : num_leaked_duplicates
+        })
+
+    assert np.all(dataset.x_all[0:len(dataset.x_test)] == dataset.x_test), "Something is very very very wrong."
+
+    keep = [i for i in range(len(dataset.x_all)) if i not in one_duplicate]
+    keep_test =  jnp.asarray([i for i in keep if i < len(dataset.x_test)], dtype=jnp.int32)
+    keep_train = jnp.asarray([i for i in keep if i >= len(dataset.x_test)], dtype=jnp.int32)
+    
     # Removes the duplicates from the train and test sets
-    x_train_curated = dataset.x_train[keep_train]
-    y_train_curated = dataset.y_train[keep_train]
+    x_train_curated = dataset.x_all[keep_train]
+    y_train_curated = dataset.y_all[keep_train]
 
-    x_test_curated = dataset.x_test[keep_test]
-    y_test_curated = dataset.y_test[keep_test]
+    x_test_curated = dataset.x_all[keep_test]
+    y_test_curated = dataset.y_all[keep_test]
 
     return Dataset(x_train_curated, y_train_curated, x_test_curated, y_test_curated,
-                    dataset.name + "_curated", dataset.classnames)
+                    dataset.name + "_curated", dataset.classnames, dataset.rng)
