@@ -46,3 +46,21 @@ def compare_images(images_a, images_b, rows):
         fig.add_subplot(rows, columns, i*2+2)
         plt.imshow(images_b[i,])
         plt.axis('off')
+
+def compare_n_images(images_tuples, rows):
+    fig = plt.figure(figsize=(16, 10))
+
+    columns = 10
+    k = 1
+
+    for i in range(len(images_tuples)):
+        for img in images_tuples[i]:
+            if k >= rows*columns:
+                return
+
+            fig.add_subplot(rows, columns, k)
+            plt.title("dups " + str(i), color=img["color"])
+            plt.imshow(img["img"])
+            plt.axis('off')
+            k += 1
+    plt.show()

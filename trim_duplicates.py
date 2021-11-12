@@ -27,7 +27,7 @@ class DuplicatesData:
             return pickle.load(f)
 
     rng: jax.random.PRNGKey
-    indices: jnp.array
+    indices: set
 
     def save(self, filepath):
         with open(filepath, 'wb') as f:
