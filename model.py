@@ -24,7 +24,7 @@ class ModelContainer(NamedTuple):
     y_train: np.array
     y_test: np.array
 
-def init_net_and_optim(x_train, num_classes, batch_size):
+def init_net_and_optim(x_train, num_classes, batch_size, initial_lr = 1e-1):
     def forward(batch, is_training, return_representation = False, return_gradcam = False, gradcam_counterfactual = False):
         net = resnet.ResNet18(num_classes = num_classes, resnet_v2 = True)
         if return_representation:
@@ -35,7 +35,7 @@ def init_net_and_optim(x_train, num_classes, batch_size):
             return net(batch, is_training)
     
     net = hk.transform_with_state(forward)
-    schedule = optax.cosine_decay_schedule(1e-1, 30 * (len(x_train) // batch_size))
+    schedule = optax.cosine_decay_schedule(initial_lr, 30 * (len(x_train) // batch_size))
     optim = optax.adamw(schedule, weight_decay = 1e-3)
 
     return net, optim
@@ -43,7 +43,7 @@ def init_net_and_optim(x_train, num_classes, batch_size):
 def get_persistent_fields(model):
     return (model.name, model.params, model.state, model.optim_state)
 
-def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, log_wandb = True, class_names = utils.CLASS_NAMES) -> ModelContainer:
+def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, log_wandb = True, class_names = utils.CLASS_NAMES, normalize = False, optimizing_metric = None) -> ModelContainer:
     """Trains the network specified at net_container, in the given dataset.
        If models/name exists, returns the cached version. Otherwise, trains the model then saves it to model/name.
 
@@ -54,17 +54,20 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
     x_train_proc = process_fn(dataset.x_train)
     x_test_proc = process_fn(dataset.x_test)
 
-    dst_path = "models/" + name + ".pickle"
-    if os.path.exists(dst_path):
-        with open(dst_path, "rb") as f:
-            print("Model loaded from", dst_path)
-            loaded_model = pickle.load(f)
-            return ModelContainer(*loaded_model, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
+    if name != '':
+        dst_path = "models/" + name + ".pickle"
+        if os.path.exists(dst_path):
+            with open(dst_path, "rb") as f:
+                print("Model loaded from", dst_path)
+                loaded_model = pickle.load(f)
+                return ModelContainer(*loaded_model, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
 
     params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
     
+    current_metric = None
+
     # Train the model for N epochs on the dataset
-    for _ in range(num_epochs):
+    for e in range(num_epochs):
         
         if masks is not None:
             _masks = masks[jax.random.choice(rng, len(masks), (len(x_train_proc),))]
@@ -72,20 +75,24 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             _x_train = x_train_proc * _masks
         else:
             _x_train = x_train_proc
-            
-        params, state, optim_state = net_container.train_epoch(params, state, optim_state, _x_train,
+    
+        params, state, optim_state, best_epoch, current_metric = net_container.train_epoch(params, state, optim_state, _x_train,
                                                                dataset.y_train, x_test_proc, dataset.y_test,
-                                                               log_wandb = log_wandb, class_names = class_names)
-        
-    
-    model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
-    
-    with open(dst_path, "wb") as f:
-        print("Model saved to", dst_path)
-        pickle.dump(get_persistent_fields(model), f)
+                                                               log_wandb = log_wandb, class_names = class_names,
+                                                               name = name, normalize = normalize, 
+                                                               optimizing_metric = optimizing_metric, current_metric = current_metric)
 
-    if log_wandb:
-        wandb.save(dst_path)
+        if optimizing_metric is None or best_epoch: 
+            model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
+            
+    if name != '':
+        with open(dst_path, "wb") as f:
+            print("Model saved to", dst_path)
+            pickle.dump(get_persistent_fields(model), f)
+        if log_wandb:
+            wandb.save(dst_path)        
+    
+    
 
     return model
 

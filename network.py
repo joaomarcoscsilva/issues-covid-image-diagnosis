@@ -18,6 +18,7 @@ class NetworkContainer(NamedTuple):
     evaluate: Callable
     train_epoch: Callable
 
+
 def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256, 3)):
     """
     Creates all the functions necessary to train the given neural network.
@@ -46,7 +47,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
 
         return params, state, optim_state
 
-    def loss_fn(params, state, x, y, training):
+    def loss_fn(params, state, x, y, training, normalize = False):
         """
         Applies the neural network to a batch, calculating the loss and accuracy.
         It also returns the updated network state, for example the batch norm statistics
@@ -56,10 +57,29 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         logits, state = net.apply(params, state, None, x, training)
 
         # Calculates metrics
-        loss = optax.softmax_cross_entropy(logits = logits, labels = y).mean()
-        acc = (logits.argmax(1) == y.argmax(1)).mean()
+        loss = optax.softmax_cross_entropy(logits = logits, labels = y)
+        acc = (logits.argmax(1) == y.argmax(1))
 
-        return loss, (acc, state, logits)
+        non_normalized_loss = loss.mean()
+        non_normalized_acc = acc.mean()
+        
+        y_probs = y.mean(0)
+        weights = y_probs[y.argmax(1)]
+        normalized_loss = loss / (weights * len(y_probs))
+        normalized_acc = acc / (weights * len(y_probs))
+
+        normalized_loss = normalized_loss.mean()
+        normalized_acc = normalized_acc.mean()
+
+        if normalize:
+            loss = normalized_loss
+        else:
+            loss = non_normalized_loss
+
+        metrics = np.array([non_normalized_loss, non_normalized_acc, normalized_loss, normalized_acc])
+        
+
+        return loss, (metrics, state, logits)
     
     
 
@@ -70,13 +90,13 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
     """
 
 
-    def update(params, state, optim_state, x, y):
+    def update(params, state, optim_state, x, y, normalize = False):
         """
         Perform a neural network optimization step in a batch, returning the new paramaters and state.
         """
 
         # Calculate the gradient of the loss function in the batch, together with metrics and the new network state
-        (loss, (acc, state, pred)), grad = grad_fn(params, state, x, y, training = True)
+        (loss, (metrics, state, pred)), grad = grad_fn(params, state, x, y, training = True, normalize = normalize)
 
         # If using parallelization, aggregates the gradient and state from all devices
         if parallel:
@@ -87,18 +107,19 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         updates, optim_state = optim.update(grad, optim_state, params)
         params = optax.apply_updates(params, updates)
 
-        return params, state, optim_state, loss, acc
+        return params, state, optim_state, loss, metrics
 
     
     # Applies either pmap or jit to the update function, depending on whether parallelization is used
     if parallel:
-        update = jax.pmap(update, axis_name = 'parallel_dim', donate_argnums = [0,1,2])
+        update = jax.pmap(update, axis_name = 'parallel_dim', donate_argnums = [0,1,2], static_broadcasted_argnums = (5))
     else:
+        # This is probably broken, as it should be jit instead of pmap. If using a single device, this needs to be fixed
         update = jax.pmap(update, donate_argnums = [0,1,2])
 
     if parallel:
         p_apply_fn = jax.pmap(net.apply, static_broadcasted_argnums = (2,4,5,6))
-        p_loss_fn = jax.pmap(loss_fn, static_broadcasted_argnums = 4)
+        p_loss_fn = jax.pmap(loss_fn, static_broadcasted_argnums = (4, 5))
 
     def predict(params, state, X, return_representation = False, return_gradcam = False, training = True, verbose = True):
         """
@@ -119,7 +140,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         preds = []
 
         # Applies the network to each batch
-        for x in tqdm(datagen(), ncols = 120, total = num_batches, disable = not verbose):
+        for x in tqdm(datagen(), total = num_batches, disable = not verbose):
             pred = _apply_fn(params, state, None, x, training, return_representation, return_gradcam)[0]
             pred = pred.reshape(-1, *pred.shape[2:])
             preds.append(jax.device_put(pred, jax.devices('cpu')[0]))
@@ -128,7 +149,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         return jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
 
 
-    def evaluate(params, state, X, Y, training = True, verbose = True):
+    def evaluate(params, state, X, Y, training = True, verbose = True, normalize = False):
         """
         Applies the neural network in batches to every example in X and Y, returing the average loss and accuracy.
         """
@@ -141,68 +162,123 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         
         # Lists with all the metrics
         losses = []
-        accs = []
+        metrics = []
         preds = []
 
         # Calculates the metrics for each batch
-        for x, y in tqdm(datagen(), ncols = 120, total = num_batches, disable = not verbose):
-            loss, (acc, _, pred) = _loss_fn(params, state, x, y, training)
-            losses.append(loss)
-            accs.append(acc)
+        for x, y in tqdm(datagen(), total = num_batches, disable = not verbose):
+            _loss, (_metrics, _, pred) = _loss_fn(params, state, x, y, training, normalize)
+            
+            losses.append(_loss)
+            metrics.append(_metrics)
 
             pred = pred.reshape(-1, *pred.shape[2:])
             preds.append(jax.device_put(pred, jax.devices('cpu')[0]))
         
         # Returns the average results
-        return np.array(losses).mean(), np.array(accs).mean(), jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
 
-    
-    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, log_wandb = True, class_names = utils.CLASS_NAMES):
+        losses = np.array(losses).mean()
+        metrics = np.array(metrics).mean((0,1))
+
+        return losses, metrics, jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
+
+    METRICS = ['non_normalized_loss', 'non_normalized_acc', 'normalized_loss', 'normalized_acc']
+    VAL_METRICS = ['val_' + s for s in METRICS]    
+
+    def verify_optimizing_metric(optimizing_metric, metrics, val_metrics, current_metric):
+        
+        assert optimizing_metric[0] in '-+', "The optimizing metric must have a '+' or '-' as the first character indicating whether the metric must be maximized (+) or minimized (-)."
+        assert (optimizing_metric[1:] in METRICS) or (optimizing_metric[1:] in VAL_METRICS), "The given optimizing metric is not supported."
+
+        sign = optimizing_metric[0]
+        metric = optimizing_metric[1:]
+
+        if metric in METRICS:
+            val = metrics[METRICS.index(metric)]
+        else:
+            val = val_metrics[VAL_METRICS.index(metric)]
+
+        if sign == '+':
+            if current_metric is None or val > current_metric:
+                return True, val
+        else:
+            if current_metric is None or val < current_metric:
+                return True, val
+        
+        return False, current_metric
+        
+
+    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, log_wandb = True, class_names = utils.CLASS_NAMES, name = '', normalize = False, optimizing_metric = None, current_metric = None):
         """
         Trains the neural network for an epoch.
         If x_test and y_test are passed, evaluates after training.
         """
+
+        def union_dict(*dicts):
+            final = dict()
+            for d in dicts:
+                d = dict(d)
+                for k in d:
+                    final[k] = d[k]
+            return final
+
         
         # Gets a data generator for the dataset
         datagen, num_batches = dataset.get_datagen(parallel, batch_size, x_train, y_train, include_last = False)
-        
-        # Creates a progress bar for the epoch
-        with tqdm(None, ncols = 120, total = num_batches, disable = not verbose) as bar:
+
             
+        # Creates a progress bar for the epoch
+        with tqdm(None, ncols = 350, total = num_batches, disable = not verbose) as bar:
+        
             # Lists with all the metrics for training
             losses = []
-            accs = []
+            metrics = []
             
             # Iterates the training set
             for x, y in datagen():
                 
                 # Performs the training step
-                params, state, optim_state, _loss, _acc = update(params, state, optim_state, x, y)
-                _loss, _acc = _loss.mean(), _acc.mean()
-                
+                params, state, optim_state, _loss, _metrics = update(params, state, optim_state, x, y, normalize)
+                _loss = _loss.mean()
+                _metrics = _metrics.mean(0)
+
                 # Updates the progress bar
                 bar.update()
-                bar.set_postfix({'loss': '%.2f' % _loss, 'acc': '%.2f' % _acc})
+                bar.set_postfix(union_dict({'loss': ('%.2f' % _loss)}, 
+                    zip(METRICS, map(lambda x: ('%.2f' % x),_metrics))))
 
                 # Saves the calculated metrics
                 losses.append(_loss)
-                accs.append(_acc)
+                metrics.append(_metrics)
                 
                 if log_wandb:
-                    wandb.log({'loss': float(_loss), 'acc': float(_acc)})
+                    wandb.log(union_dict({'loss': float(_loss)}, zip(METRICS, map(float, _metrics))))
 
             # If available, evaluates on the test set
             if x_test is not None and y_test is not None:
-                loss, acc, logits = evaluate(params, state, x_test, y_test, verbose = False)
-                bar.set_postfix({'loss' : '%.2f' % np.array(losses).mean(), 'acc' : '%.2f' % np.array(accs).mean(), 'val_loss' : '%.2f' % loss, 'val_acc' : '%.2f' % acc})
+                val_loss, val_metrics, logits = evaluate(params, state, x_test, y_test, verbose = False, normalize = normalize)
+                
+                bar.set_postfix(union_dict({'loss' : '%.2f' % np.array(losses).mean()},
+                    zip(METRICS, map(lambda m: ('%.2f' % m), np.array(metrics).mean(0))),
+                    zip(VAL_METRICS, map(lambda x: ('%.2f' % x), val_metrics))))
+
                 conf_matrix = confusion_matrix(y_true = y_test[0:len(logits)].argmax(1), y_pred = logits.argmax(1), normalize = 'true')
 
                 if log_wandb:
-                    wandb.log({'val_loss': float(loss), 'val_acc': float(acc), 'val_confusion' : 
-                        wandb.Table(data = conf_matrix, columns = class_names, rows = class_names)})
+                    wandb.log(union_dict({'val_loss': float(val_loss)},
+                    zip(VAL_METRICS, map(float, val_metrics)), 
+                    {'val_confusion' : wandb.Table(data = conf_matrix, columns = class_names, rows = class_names)}))
+            else:
+                val_metrics = None
 
+        if optimizing_metric is not None:
+            improved, current_metric = verify_optimizing_metric(optimizing_metric, np.array(metrics).mean(0), val_metrics, current_metric)
+            if improved:
+                print(f'Reached maximum value of {optimizing_metric[1:]} so far.')
+                return params, state, optim_state, True, current_metric
+                
         # Returns the new parameters and state
-        return params, state, optim_state
+        return params, state, optim_state, False, current_metric
 
 
     return NetworkContainer(init_fn, loss_fn, grad_fn, update, predict, evaluate, train_epoch)

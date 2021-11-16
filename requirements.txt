@@ -4,4 +4,6 @@ opencv_python==4.5.3.56
 optax==0.0.9
 tqdm==4.62.0
 numpy==1.19.5
-dm-haiku==0.01
+seaborn==0.11.2
+scikit-learn==1.0.1
+wandb==0.12.6
