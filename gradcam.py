@@ -5,7 +5,6 @@ from tqdm import tqdm
 import cv2
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import utils
 
 def resnet(resnet, conv_out, counterfactual):
   jac = jax.jacrev(resnet.conv_to_logits)(conv_out)
@@ -79,7 +78,7 @@ def plot_heatmap(img, heatmap, alpha=0.4):
   # Display Grad CAM
   plt.imshow(superimposed_img)
 
-def plot_gradcams_from_class(target_class, x_gradcam_data, y_gradcam_data, y_pred, cams, rows=3, columns=8, rng=jax.random.PRNGKey(987987689)):
+def plot_gradcams_from_class(target_class, x_gradcam_data, y_gradcam_data, y_pred, cams, classnames, rows=3, columns=8, rng=jax.random.PRNGKey(987987689)):
   """
   Plots a sample of the Grad-CAMs from images of a certain class. The Grad-CAM displayed is dependant on the prediction of the model for each image.
 
@@ -106,7 +105,7 @@ def plot_gradcams_from_class(target_class, x_gradcam_data, y_gradcam_data, y_pre
       rows*columns], replace=False)
 
   fig = plt.figure(figsize=(32, 12))
-  fig.suptitle(utils.CLASS_NAMES[target_class] + " - Grad-CAM", fontsize=16)
+  fig.suptitle(classnames[target_class] + " - Grad-CAM", fontsize=16)
 
   for i in range(rows*columns):
       fig.add_subplot(rows, columns, i+1)
@@ -118,7 +117,7 @@ def plot_gradcams_from_class(target_class, x_gradcam_data, y_gradcam_data, y_pre
 
       plot_heatmap(img, heatmap, alpha=0.5)
 
-      title = "Pred: " + utils.CLASS_NAMES[pred]
+      title = "Pred: " + classnames[pred]
 
       plt.title(title)
       plt.axis('off')

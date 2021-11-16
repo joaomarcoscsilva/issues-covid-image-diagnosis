@@ -1,3 +1,4 @@
+from pydoc import classname
 from typing import Mapping, NamedTuple
 import numpy as np
 import jax.numpy as jnp
@@ -6,7 +7,6 @@ import os
 import pickle
 import seaborn as sns
 from sklearn.metrics import accuracy_score, confusion_matrix
-import utils
 import matplotlib.pyplot as plt
 import resnet
 import haiku as hk
@@ -43,7 +43,7 @@ def init_net_and_optim(x_train, num_classes, batch_size, initial_lr = 1e-1):
 def get_persistent_fields(model):
     return (model.name, model.params, model.state, model.optim_state)
 
-def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, log_wandb = True, class_names = utils.CLASS_NAMES, normalize = False, optimizing_metric = None) -> ModelContainer:
+def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, class_names = utils.CLASS_NAMES, normalize = False, optimizing_metric = None) -> ModelContainer:
     """Trains the network specified at net_container, in the given dataset.
        If models/name exists, returns the cached version. Otherwise, trains the model then saves it to model/name.
 
@@ -67,7 +67,7 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
     current_metric = None
 
     # Train the model for N epochs on the dataset
-    for e in range(num_epochs):
+    for epoch_i in range(num_epochs):
         
         if masks is not None:
             _masks = masks[jax.random.choice(rng, len(masks), (len(x_train_proc),))]
@@ -78,9 +78,10 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
     
         params, state, optim_state, best_epoch, current_metric = net_container.train_epoch(params, state, optim_state, _x_train,
                                                                dataset.y_train, x_test_proc, dataset.y_test,
-                                                               log_wandb = log_wandb, class_names = class_names,
+                                                               wandb_run = wandb_run, classnames = dataset.classnames,
                                                                name = name, normalize = normalize, 
-                                                               optimizing_metric = optimizing_metric, current_metric = current_metric)
+                                                               optimizing_metric = optimizing_metric, current_metric = current_metric,
+                                                               final_epoch=epoch_i == num_epochs-1)
 
         if optimizing_metric is None or best_epoch: 
             model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
@@ -92,11 +93,9 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
         if log_wandb:
             wandb.save(dst_path)        
     
-    
-
     return model
 
-def plot_confusion_matrix(model_container, y_pred):
+def plot_confusion_matrix(model_container, y_pred, classnames):
     sns.heatmap(confusion_matrix(model_container.y_test.argmax(1), y_pred.argmax(1), normalize = 'true'),
-                                 annot = True, xticklabels = utils.CLASS_NAMES, yticklabels = utils.CLASS_NAMES)
+                                 annot = True, xticklabels = classnames, yticklabels = classnames)
     plt.show()

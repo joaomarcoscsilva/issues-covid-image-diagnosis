@@ -1,10 +1,10 @@
 import seaborn as sns
 import sklearn.metrics
-import utils
 import matplotlib.pyplot as plt
 import math
+import wandb
 
-def confusion_matrix(dataset, y_pred, title, test = True, class_names = utils.CLASS_NAMES):
+def confusion_matrix(dataset, y_pred, title, test = True, classnames = utils.CLASS_NAMES):
     if test:
         data = dataset.y_test
     else:
@@ -12,16 +12,28 @@ def confusion_matrix(dataset, y_pred, title, test = True, class_names = utils.CL
     
     sns.heatmap(sklearn.metrics.confusion_matrix(data[0:y_pred.shape[0],].argmax(1), y_pred.argmax(1), normalize = 'true'),
                 annot = True,
-                xticklabels = class_names,
-                yticklabels = class_names).set(title = title)
+                xticklabels = classnames,
+                yticklabels = classnames).set(title = title)
     plt.show()
 
-def heatmatrix(matrix, title):
+def heatmatrix(matrix, title, classnames):
     sns.heatmap(matrix,
                 annot = True,
-                xticklabels = utils.CLASS_NAMES,
-                yticklabels = utils.CLASS_NAMES).set(title = title)
+                xticklabels = classnames,
+                yticklabels = classnames).set(title = title)
     plt.show()
+
+def wandb_log_img(wandb_run, title, show=True, fig=None):
+    if wandb_run is not None:    
+        wandb_run.log({
+            title: wandb.Image(plt.gcf()) if fig is None else wandb.Image(fig)
+        })
+
+    if show:
+        if fig is None:
+            plt.show()
+        else:
+            fig.show()
 
 def compare_images(images_a, images_b, rows):
     fig = plt.figure(figsize=(32, 24))
@@ -30,7 +42,6 @@ def compare_images(images_a, images_b, rows):
 
     for i in range(int(rows * columns / 2)):
         if i >= images_a.shape[0]:
-            plt.show()
             return
 
         fig.add_subplot(rows, columns, i*2+1)
@@ -41,4 +52,20 @@ def compare_images(images_a, images_b, rows):
         plt.imshow(images_b[i,])
         plt.axis('off')
 
+def compare_n_images(images_tuples, rows):
+    fig = plt.figure(figsize=(16, 10))
+
+    columns = 10
+    k = 1
+
+    for i in range(len(images_tuples)):
+        for img in images_tuples[i]:
+            if k >= rows*columns:
+                return
+
+            fig.add_subplot(rows, columns, k)
+            plt.title("dups " + str(i), color=img["color"])
+            plt.imshow(img["img"])
+            plt.axis('off')
+            k += 1
     plt.show()

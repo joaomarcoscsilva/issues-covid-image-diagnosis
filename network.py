@@ -5,9 +5,12 @@ import optax
 from tqdm import tqdm
 import dataset
 import wandb
-import utils
+from wandb import Table
 from sklearn.metrics import confusion_matrix
 from IPython import embed
+import plots
+import pandas as pd
+import seaborn as sns
 
 class NetworkContainer(NamedTuple):
     init_fn: Callable
@@ -208,7 +211,9 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         return False, current_metric
         
 
-    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, verbose = True, log_wandb = True, class_names = utils.CLASS_NAMES, name = '', normalize = False, optimizing_metric = None, current_metric = None):
+    def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, 
+    verbose = True, wandb_run = None, classnames = utils.CLASS_NAMES, final_epoch = False,
+    name = '', normalize = False, optimizing_metric = None, current_metric = None):
         """
         Trains the neural network for an epoch.
         If x_test and y_test are passed, evaluates after training.
@@ -226,6 +231,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         # Gets a data generator for the dataset
         datagen, num_batches = dataset.get_datagen(parallel, batch_size, x_train, y_train, include_last = False)
 
+        final_acc = None
             
         # Creates a progress bar for the epoch
         with tqdm(None, ncols = 350, total = num_batches, disable = not verbose) as bar:
@@ -251,8 +257,8 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                 losses.append(_loss)
                 metrics.append(_metrics)
                 
-                if log_wandb:
-                    wandb.log(union_dict({'loss': float(_loss)}, zip(METRICS, map(float, _metrics))))
+                if not wandb_run is None:
+                    wandb_run.log(union_dict({'loss': float(_loss)}, zip(METRICS, map(float, _metrics))))
 
             # If available, evaluates on the test set
             if x_test is not None and y_test is not None:
@@ -263,11 +269,13 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                     zip(VAL_METRICS, map(lambda x: ('%.2f' % x), val_metrics))))
 
                 conf_matrix = confusion_matrix(y_true = y_test[0:len(logits)].argmax(1), y_pred = logits.argmax(1), normalize = 'true')
+                bar.set_postfix({'loss' : '%.2f' % np.array(losses).mean(), 'acc' : '%.2f' % np.array(accs).mean(), 'val_loss' : '%.2f' % loss, 'val_acc' : '%.2f' % acc})
+                final_acc = acc
 
-                if log_wandb:
-                    wandb.log(union_dict({'val_loss': float(val_loss)},
+                if not wandb_run is None:
+                    wandb_run.log(union_dict({'val_loss': float(val_loss)},
                     zip(VAL_METRICS, map(float, val_metrics)), 
-                    {'val_confusion' : wandb.Table(data = conf_matrix, columns = class_names, rows = class_names)}))
+                    {'val_confusion' : Table(data = conf_matrix, columns = class_names, rows = class_names)}))
             else:
                 val_metrics = None
 
@@ -276,6 +284,10 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
             if improved:
                 print(f'Reached maximum value of {optimizing_metric[1:]} so far.')
                 return params, state, optim_state, True, current_metric
+        
+        if not final_acc is None and final_epoch:
+            sns.heatmap(conf_matrix, annot = True, xticklabels = classnames, yticklabels = classnames)
+            plots.wandb_log_img(wandb_run, "Confusion matrix")
                 
         # Returns the new parameters and state
         return params, state, optim_state, False, current_metric
