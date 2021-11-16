@@ -1,6 +1,7 @@
 import jax
 from jax import numpy as np
 from glob import glob
+import os
 
 class Dataset:
     x_train: np.array
@@ -57,24 +58,46 @@ class Dataset:
         Loads the dataset to memory, already shuffled and split into train and test.
         """
 
-        x = jax.device_put(np.load(dataset_name + '/x.npy'), jax.devices('cpu')[0])
-        y = jax.device_put(np.load(dataset_name +'/y.npy'), jax.devices('cpu')[0])
+        if 'x.npy' in os.listdir(dataset_name):
+            x = jax.device_put(np.load(dataset_name + '/x.npy'), jax.devices('cpu')[0])
+            y = jax.device_put(np.load(dataset_name +'/y.npy'), jax.devices('cpu')[0])
         
-        ids = np.arange(0, len(x))
-        ids = jax.random.permutation(rng, ids)
+            ids = np.arange(0, len(x))
+            ids = jax.random.permutation(rng, ids)
         
-        x = x[ids]
-        y = y[ids]
+            x = x[ids]
+            y = y[ids]
         
-        y = jax.nn.one_hot(y, num_classes)
+            y = jax.nn.one_hot(y, num_classes)
 
-        split_point = int(test_size * len(x))
+            split_point = int(test_size * len(x))
 
-        x_test = x[0:split_point]
-        y_test = y[0:split_point]
+            x_test = x[0:split_point]
+            y_test = y[0:split_point]
 
-        x_train = x[split_point:]
-        y_train = y[split_point:]
+            x_train = x[split_point:]
+            y_train = y[split_point:]
+        
+        else:
+            x_train = jax.device_put(np.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
+            y_train = jax.device_put(np.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
+            x_test = jax.device_put(np.load(dataset_name + '/x_test.npy'), jax.devices('cpu')[0])
+            y_test = jax.device_put(np.load(dataset_name +'/y_test.npy'), jax.devices('cpu')[0])
+
+            y_train = jax.nn.one_hot(y_train, num_classes)
+            y_test = jax.nn.one_hot(y_test, num_classes)
+
+            ids_train = np.arange(0, len(x_train))
+            ids_train = jax.random.permutation(rng, ids_train)
+
+            x_train = x_train[ids_train]
+            y_train = y_train[ids_train]
+
+            ids_test = np.arange(0, len(x_test))
+            ids_test = jax.random.permutation(rng, ids_test)
+
+            x_test = x_test[ids_test]
+            y_test = y_test[ids_test]
 
         return Dataset(x_train, y_train, x_test, y_test)
 

@@ -4,11 +4,16 @@ import utils
 import matplotlib.pyplot as plt
 import math
 
-def confusion_matrix(dataset, y_test_pred, title):
-    sns.heatmap(sklearn.metrics.confusion_matrix(dataset.y_test[0:y_test_pred.shape[0],].argmax(1), y_test_pred.argmax(1), normalize = 'true'),
+def confusion_matrix(dataset, y_pred, title, test = True, class_names = utils.CLASS_NAMES):
+    if test:
+        data = dataset.y_test
+    else:
+        data = dataset.y_train
+    
+    sns.heatmap(sklearn.metrics.confusion_matrix(data[0:y_pred.shape[0],].argmax(1), y_pred.argmax(1), normalize = 'true'),
                 annot = True,
-                xticklabels = utils.CLASS_NAMES,
-                yticklabels = utils.CLASS_NAMES).set(title = title)
+                xticklabels = class_names,
+                yticklabels = class_names).set(title = title)
     plt.show()
 
 def heatmatrix(matrix, title):
