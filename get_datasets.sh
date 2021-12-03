@@ -1,4 +1,4 @@
-# Add kaggle.json to ~/.kaggle/
+# BEFORE RUNNING: Add kaggle.json to ~/.kaggle/
 ./download_mendeley.sh
 pip3 install -r requirements
 mv data/curated_xray_dataset/ mendeley/
@@ -12,3 +12,9 @@ mv "mendeley/Pneumonia-Bacterial" "mendeley/Bacterial pneumonia"
 mv "mendeley/Pneumonia-Viral" "mendeley/Viral pneumonia"
 python3 process_data.py mendeley
 python3 process_data.py tawsifur
+kaggle datasets download -d andyczhao/covidx-cxr2
+mkdir covidx
+cd covidx
+unzip covidx-cxr2.zip
+cd ..
+python3 process_covidx.py

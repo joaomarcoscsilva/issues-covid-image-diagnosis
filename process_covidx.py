@@ -71,11 +71,11 @@ resolution = 256
 # saves them as "x.npy" and "y.npy" in the current directory
 if __name__ == '__main__':
 
-    y_train = load_labels('covidx/labels/train_COVIDx8A.txt')
-    y_test = load_labels('covidx/labels/test_COVIDx8A.txt')
+    y_train = load_labels('covidx/train.txt')
+    y_test = load_labels('covidx/test.txt')
 
-    x_train = load_data('./covidx/data/train', y_train)
-    x_test = load_data('./covidx/data/test', y_test)
+    x_train = load_data('covidx/train', y_train)
+    x_test = load_data('covidx/test', y_test)
     
     with open('x_train.npy', 'wb') as f:
         np.save(f, x_train)
@@ -88,8 +88,8 @@ if __name__ == '__main__':
     y_train = list(map(d.get, y_train.values()))
     y_test = list(map(d.get, y_test.values()))
 
-    with open('y_train.npy', 'wb') as f:
+    with open('covidx/y_train.npy', 'wb') as f:
         np.save(f, y_train)
 
-    with open('y_test.npy', 'wb') as f:
+    with open('covidx/y_test.npy', 'wb') as f:
         np.save(f, y_test)
