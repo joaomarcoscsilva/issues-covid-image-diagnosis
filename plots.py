@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 import wandb
 
-def confusion_matrix(dataset, y_pred, title, test = True, classnames = utils.CLASS_NAMES):
+def confusion_matrix(dataset, y_pred, title, test = True, classnames = None):
     if test:
         data = dataset.y_test
     else:

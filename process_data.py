@@ -66,7 +66,8 @@ def load_data(data_dir):
     classes_not_added = []
 
     for cls in classes:
-        formatted_cls = cls.split('/')[-2].lower().replace('_', ' ').replace('-', ' ').replace('19', '')
+        formatted_cls = cls.split('/')[-2].lower().replace('_', ' ').replace('-', ' ').replace('19', '').strip()
+        
         if formatted_cls in preferred_class_order:
             idx = preferred_class_order[formatted_cls]
             classes_ordered.insert(idx, { 'foldername': cls, 'classname': preferred_names[idx] })

@@ -13,6 +13,8 @@ import haiku as hk
 import optax
 from tqdm import tqdm
 import wandb
+from dataset import train_test_split
+from copy import deepcopy
 
 class ModelContainer(NamedTuple):
     name: str
@@ -43,7 +45,7 @@ def init_net_and_optim(x_train, num_classes, batch_size, initial_lr = 1e-1):
 def get_persistent_fields(model):
     return (model.name, model.params, model.state, model.optim_state)
 
-def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, class_names = utils.CLASS_NAMES, normalize = False, optimizing_metric = None) -> ModelContainer:
+def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, classnames = None, normalize = False, optimizing_metric = None, validation_size = None, x_target = None, y_target = None) -> ModelContainer:
     """Trains the network specified at net_container, in the given dataset.
        If models/name exists, returns the cached version. Otherwise, trains the model then saves it to model/name.
 
@@ -60,11 +62,15 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             with open(dst_path, "rb") as f:
                 print("Model loaded from", dst_path)
                 loaded_model = pickle.load(f)
-                return ModelContainer(*loaded_model, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
+                #return ModelContainer(*loaded_model, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
+                return loaded_model
 
     params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
-    
+    rng = jax.random.split(rng)[0]
+
     current_metric = None
+
+    model = None
 
     # Train the model for N epochs on the dataset
     for epoch_i in range(num_epochs):
@@ -75,23 +81,37 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             _x_train = x_train_proc * _masks
         else:
             _x_train = x_train_proc
-    
+
+        if validation_size is not None:
+            _x_train, _x_test, _y_train, _y_test = train_test_split(_x_train, dataset.y_train, validation_size, rng = rng)
+            rng = jax.random.split(rng)[0]
+
+        else:
+            _y_train = dataset.y_train
+            _x_test = x_test_proc
+            _y_test = dataset.y_test
+
         params, state, optim_state, best_epoch, current_metric = net_container.train_epoch(params, state, optim_state, _x_train,
-                                                               dataset.y_train, x_test_proc, dataset.y_test,
+                                                               _y_train, _x_test, _y_test,
                                                                wandb_run = wandb_run, classnames = dataset.classnames,
                                                                name = name, normalize = normalize, 
                                                                optimizing_metric = optimizing_metric, current_metric = current_metric,
-                                                               final_epoch=epoch_i == num_epochs-1)
-
-        if optimizing_metric is None or best_epoch: 
+                                                               final_epoch=epoch_i == num_epochs-1,
+                                                               x_target = process_fn(x_target), y_target = y_target)
+                                                               
+        
+        if optimizing_metric is None or best_epoch:
             model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
+            model_pk = pickle.dumps(model)
             
     if name != '':
         with open(dst_path, "wb") as f:
             print("Model saved to", dst_path)
-            pickle.dump(get_persistent_fields(model), f)
-        if log_wandb:
-            wandb.save(dst_path)        
+            f.write(model_pk)
+        if wandb_run is not None:
+            wandb.save(dst_path)
+    
+    model = pickle.loads(bytes(model_pk))
     
     return model
 

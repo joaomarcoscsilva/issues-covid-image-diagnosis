@@ -187,19 +187,23 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
 
     METRICS = ['non_normalized_loss', 'non_normalized_acc', 'normalized_loss', 'normalized_acc']
     VAL_METRICS = ['val_' + s for s in METRICS]    
+    TARGET_METRICS = ['target_' + s for s in METRICS]    
 
-    def verify_optimizing_metric(optimizing_metric, metrics, val_metrics, current_metric):
+    def verify_optimizing_metric(optimizing_metric, metrics, val_metrics, target_metrics, current_metric):
         
         assert optimizing_metric[0] in '-+', "The optimizing metric must have a '+' or '-' as the first character indicating whether the metric must be maximized (+) or minimized (-)."
-        assert (optimizing_metric[1:] in METRICS) or (optimizing_metric[1:] in VAL_METRICS), "The given optimizing metric is not supported."
 
         sign = optimizing_metric[0]
         metric = optimizing_metric[1:]
 
         if metric in METRICS:
             val = metrics[METRICS.index(metric)]
-        else:
+        elif metric in VAL_METRICS:
             val = val_metrics[VAL_METRICS.index(metric)]
+        elif metric in TARGET_METRICS:
+            val = target_metrics[TARGET_METRICS.index(metric)]
+        else:
+            raise ValueError("The given optimizing metric is not supported.")
 
         if sign == '+':
             if current_metric is None or val > current_metric:
@@ -212,8 +216,8 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         
 
     def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, 
-    verbose = True, wandb_run = None, classnames = utils.CLASS_NAMES, final_epoch = False,
-    name = '', normalize = False, optimizing_metric = None, current_metric = None):
+    verbose = True, wandb_run = None, classnames = None, final_epoch = False,
+    name = '', normalize = False, optimizing_metric = None, current_metric = None, x_target = None, y_target = None):
         """
         Trains the neural network for an epoch.
         If x_test and y_test are passed, evaluates after training.
@@ -269,18 +273,26 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                     zip(VAL_METRICS, map(lambda x: ('%.2f' % x), val_metrics))))
 
                 conf_matrix = confusion_matrix(y_true = y_test[0:len(logits)].argmax(1), y_pred = logits.argmax(1), normalize = 'true')
-                bar.set_postfix({'loss' : '%.2f' % np.array(losses).mean(), 'acc' : '%.2f' % np.array(accs).mean(), 'val_loss' : '%.2f' % loss, 'val_acc' : '%.2f' % acc})
-                final_acc = acc
+
+                val_metrics_dict = dict(zip(VAL_METRICS, val_metrics))
+                final_acc = val_metrics_dict['val_non_normalized_acc'] if not normalize else val_metrics_dict['val_normalized_acc']
 
                 if not wandb_run is None:
                     wandb_run.log(union_dict({'val_loss': float(val_loss)},
-                    zip(VAL_METRICS, map(float, val_metrics)), 
-                    {'val_confusion' : Table(data = conf_matrix, columns = class_names, rows = class_names)}))
+                    zip(VAL_METRICS, map(float, val_metrics))))
             else:
                 val_metrics = None
 
+                # If available, evaluates on the target set
+            if x_target is not None and y_target is not None and wandb_run is not None:
+                target_loss, target_metrics, logits = evaluate(params, state, x_target, y_target, verbose = False, normalize = normalize)
+                target_metrics_dict = dict(zip(TARGET_METRICS, target_metrics))
+                wandb_run.log(target_metrics_dict)
+            else:
+                target_metrics = None
+
         if optimizing_metric is not None:
-            improved, current_metric = verify_optimizing_metric(optimizing_metric, np.array(metrics).mean(0), val_metrics, current_metric)
+            improved, current_metric = verify_optimizing_metric(optimizing_metric, np.array(metrics).mean(0), val_metrics, target_metrics, current_metric)
             if improved:
                 print(f'Reached maximum value of {optimizing_metric[1:]} so far.')
                 return params, state, optim_state, True, current_metric

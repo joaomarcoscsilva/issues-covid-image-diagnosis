@@ -3,6 +3,7 @@ import jax
 from jax import numpy as np
 from glob import glob
 import os
+from IPython import embed
 
 class Dataset:
     x_train: np.array
@@ -60,31 +61,41 @@ class Dataset:
         return Dataset(fold_x_train, fold_y_train, fold_x_test, fold_y_test, self.name, self.classnames, self.rng)
 
     @staticmethod
-    def load(dataset_name, rng, test_size = 0.2, num_classes = 4):
+    def load(dataset_name, rng, test_size = 0.2, num_classes = 4, drop_classes = [], official_split = True):
         """
         Loads the dataset to memory, already shuffled and split into train and test.
         """
+        drop_classes = np.array(drop_classes)
+        keep_classes = np.array([i for i in range(num_classes) if i not in drop_classes])
 
-        if 'x.npy' in os.listdir(dataset_name):
-            x = jax.device_put(np.load(dataset_name + '/x.npy'), jax.devices('cpu')[0])
-            y = jax.device_put(np.load(dataset_name +'/y.npy'), jax.devices('cpu')[0])
-        
-            ids = np.arange(0, len(x))
-            ids = jax.random.permutation(rng, ids)
-        
-            x = x[ids]
-            y = y[ids]
-        
+        if 'x.npy' in os.listdir(dataset_name) or not official_split:
+            
+            if not official_split:
+                'x_train.npy' in os.listdir(dataset_name) and 'x_test.npy' in os.listdir(dataset_name), 'Setting official_split to False is only supported for datasets with an official train-test split'
+                x_train = jax.device_put(np.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
+                y_train = jax.device_put(np.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
+                x_test = jax.device_put(np.load(dataset_name + '/x_test.npy'), jax.devices('cpu')[0])
+                y_test = jax.device_put(np.load(dataset_name +'/y_test.npy'), jax.devices('cpu')[0])
+
+                x = np.concatenate([x_train, x_test])
+                y = np.concatenate([y_train, y_test])
+
+            else:
+                x = jax.device_put(np.load(dataset_name + '/x.npy'), jax.devices('cpu')[0])
+                y = jax.device_put(np.load(dataset_name +'/y.npy'), jax.devices('cpu')[0])
+
+
+
             y = jax.nn.one_hot(y, num_classes)
+            
+            x = x[np.isin(y.argmax(1), keep_classes)]
+            y = y[np.isin(y.argmax(1), keep_classes)]
 
-            split_point = int(test_size * len(x))
+            x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = test_size, rng = rng)
 
-            x_test = x[0:split_point]
-            y_test = y[0:split_point]
+            y_train = y_train[:, keep_classes]
+            y_test = y_test[:, keep_classes]
 
-            x_train = x[split_point:]
-            y_train = y[split_point:]
-        
         else:
             x_train = jax.device_put(np.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
             y_train = jax.device_put(np.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
@@ -95,22 +106,47 @@ class Dataset:
             y_test = jax.nn.one_hot(y_test, num_classes)
 
             ids_train = np.arange(0, len(x_train))
+            ids_train = ids_train[np.isin(y_train.argmax(1), keep_classes)]
             ids_train = jax.random.permutation(rng, ids_train)
 
             x_train = x_train[ids_train]
             y_train = y_train[ids_train]
 
             ids_test = np.arange(0, len(x_test))
+            ids_test = ids_test[np.isin(y_test.argmax(1), keep_classes)]
             ids_test = jax.random.permutation(rng, ids_test)
 
             x_test = x_test[ids_test]
             y_test = y_test[ids_test]
 
+            y_train = y_train[:, keep_classes]
+            y_test = y_test[:, keep_classes]
+
+
         with open(dataset_name + '/metadata.pickle', 'rb') as f:
             metadata = pickle.load(f)
+            metadata['classnames'] = [metadata['classnames'][i] for i in keep_classes]
         
         return Dataset(x_train, y_train, x_test, y_test, dataset_name, metadata['classnames'], rng)
 
+def train_test_split(x, y, test_size = 0.2, rng = None):
+    ids = np.arange(0, len(x))
+    if rng is not None:
+        ids = jax.random.permutation(rng, ids)
+
+    x = x[ids]
+    y = y[ids]
+
+    split_point = int(test_size * len(x))
+
+    x_test = x[0:split_point]
+    y_test = y[0:split_point]
+
+    x_train = x[split_point:]
+    y_train = y[split_point:]
+
+    return x_train, x_test, y_train, y_test
+    
 
 def shard_array(array):
     """
