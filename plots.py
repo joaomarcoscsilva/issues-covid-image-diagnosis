@@ -36,7 +36,7 @@ def wandb_log_img(wandb_run, title, show=True, fig=None):
             fig.show()
 
 def compare_images(images_a, images_b, rows):
-    fig = plt.figure(figsize=(32, 24))
+    fig = plt.figure(figsize=(32, 12))
 
     columns = 10
 
@@ -53,7 +53,7 @@ def compare_images(images_a, images_b, rows):
         plt.axis('off')
 
 def compare_n_images(images_tuples, rows):
-    fig = plt.figure(figsize=(16, 10))
+    fig = plt.figure(figsize=(16, 30))
 
     columns = 10
     k = 1

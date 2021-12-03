@@ -46,7 +46,7 @@ preferred_class_order = {
     'pneumonia viral': 1,
     'viral pneumonia': 1,
     'covid': 2,
-    # 3 is either lung opacity or bact pneumonia
+    # 3 is either "lung opacity" or "bact pneumonia"
 }
 
 preferred_names = [
@@ -65,6 +65,7 @@ def load_data(data_dir):
     classes_ordered = []
     classes_not_added = []
 
+    # Class order validation
     for cls in classes:
         formatted_cls = cls.split('/')[-2].lower().replace('_', ' ').replace('-', ' ').replace('19', '').strip()
         
@@ -72,15 +73,17 @@ def load_data(data_dir):
             idx = preferred_class_order[formatted_cls]
             classes_ordered.insert(idx, { 'foldername': cls, 'classname': preferred_names[idx] })
         else:
+            print(formatted_cls, "not in", preferred_class_order)
             classes_not_added.append({ 'foldername': cls, 'classname': formatted_cls.capitalize() })
 
-    for cls in classes_not_added:
-        classes_ordered.append(cls)
-
+    
     if len(classes_not_added) > 1:
         print("WARNING: MORE THAN ONE CLASS WITHOUT SPECIFIC ORDERING. ABORTING...")
         print(classes_not_added)
-        return
+        assert False
+
+    for cls in classes_not_added:
+        classes_ordered.append(cls)
     
     print("CLASS ORDER: ", classes_ordered)
 
