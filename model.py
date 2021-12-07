@@ -15,18 +15,17 @@ from tqdm import tqdm
 import wandb
 from dataset import train_test_split
 from copy import deepcopy
+import plots
 
 class ModelContainer(NamedTuple):
     name: str
     params: Mapping
     state: Mapping
     optim_state: Mapping
-    x_train_proc: np.array
-    x_test_proc: np.array
-    y_train: np.array
-    y_test: np.array
 
-def init_net_and_optim(x_train, num_classes, batch_size, initial_lr = 1e-1):
+def init_net_and_optim(data, batch_size, initial_lr = 1e-1, num_epochs = 30):
+    num_classes = len(data.classnames)
+
     def forward(batch, is_training, return_representation = False, return_gradcam = False, gradcam_counterfactual = False):
         net = resnet.ResNet18(num_classes = num_classes, resnet_v2 = True)
         if return_representation:
@@ -37,7 +36,7 @@ def init_net_and_optim(x_train, num_classes, batch_size, initial_lr = 1e-1):
             return net(batch, is_training)
     
     net = hk.transform_with_state(forward)
-    schedule = optax.cosine_decay_schedule(initial_lr, 30 * (len(x_train) // batch_size))
+    schedule = optax.cosine_decay_schedule(initial_lr, num_epochs * (len(data.x_train) // batch_size))
     optim = optax.adamw(schedule, weight_decay = 1e-3)
 
     return net, optim
@@ -45,7 +44,7 @@ def init_net_and_optim(x_train, num_classes, batch_size, initial_lr = 1e-1):
 def get_persistent_fields(model):
     return (model.name, model.params, model.state, model.optim_state)
 
-def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, classnames = None, normalize = False, optimizing_metric = None, validation_size = None, x_target = None, y_target = None) -> ModelContainer:
+def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, classnames = None, normalize = False, optimizing_metric = None, validation_size = None, target_data = None, force_save = False, initialization = None) -> ModelContainer:
     """Trains the network specified at net_container, in the given dataset.
        If models/name exists, returns the cached version. Otherwise, trains the model then saves it to model/name.
 
@@ -58,7 +57,7 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
 
     if name != '':
         dst_path = "models/" + name + ".pickle"
-        if os.path.exists(dst_path):
+        if os.path.exists(dst_path) and not force_save:
             with open(dst_path, "rb") as f:
                 print("Model loaded from", dst_path)
                 loaded_model = pickle.load(f)
@@ -66,11 +65,16 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
                 return loaded_model
 
     params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
+
+    if initialization is not None:
+        params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
+    
+        with open(initialization, "rb") as f:
+            params, state = get_persistent_fields(pickle.load(f))[1:3]
+
     rng = jax.random.split(rng)[0]
 
     current_metric = None
-
-    model = None
 
     # Train the model for N epochs on the dataset
     for epoch_i in range(num_epochs):
@@ -83,26 +87,31 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             _x_train = x_train_proc
 
         if validation_size is not None:
-            _x_train, _x_test, _y_train, _y_test = train_test_split(_x_train, dataset.y_train, validation_size, rng = rng)
+            _x_train, _x_test, _y_train, _y_test = train_test_split(_x_train, dataset.y_train, test_size = validation_size, rng = rng)
             rng = jax.random.split(rng)[0]
-
         else:
             _y_train = dataset.y_train
             _x_test = x_test_proc
             _y_test = dataset.y_test
+
+        if target_data is not None:
+            _x_target = process_fn(target_data.x_all)
+            _y_target = target_data.y_all
+        else:
+            _x_target = None
+            _y_target = None
 
         params, state, optim_state, best_epoch, current_metric = net_container.train_epoch(params, state, optim_state, _x_train,
                                                                _y_train, _x_test, _y_test,
                                                                wandb_run = wandb_run, classnames = dataset.classnames,
                                                                name = name, normalize = normalize, 
                                                                optimizing_metric = optimizing_metric, current_metric = current_metric,
-                                                               final_epoch=epoch_i == num_epochs-1,
-                                                               x_target = process_fn(x_target), y_target = y_target)
+                                                               final_epoch = epoch_i == num_epochs-1, current_epoch = epoch_i,
+                                                               x_target = _x_target, y_target = _y_target)
                                                                
         
         if optimizing_metric is None or best_epoch:
-            model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
-            model_pk = pickle.dumps(model)
+            model_pk = pickle.dumps(ModelContainer(name, params, state, optim_state))
             
     if name != '':
         with open(dst_path, "wb") as f:
@@ -111,11 +120,29 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
         if wandb_run is not None:
             wandb.save(dst_path)
     
-    model = pickle.loads(bytes(model_pk))
-    
-    return model
+    return pickle.loads(model_pk)
 
-def plot_confusion_matrix(model_container, y_pred, classnames):
-    sns.heatmap(confusion_matrix(model_container.y_test.argmax(1), y_pred.argmax(1), normalize = 'true'),
+def plot_confusion_matrix(y_test, y_pred, classnames):
+    sns.heatmap(confusion_matrix(y_test.argmax(1), y_pred.argmax(1), normalize = 'true'),
                                  annot = True, xticklabels = classnames, yticklabels = classnames)
+    plt.show()
+
+def evaluate_model(net_container, model_container, x, y, classnames, prefix = '', wandb_run = None):
+    METRICS = ['non_normalized_loss', 'non_normalized_acc', 'normalized_loss', 'normalized_acc']
+    if prefix != '':
+        METRICS = [prefix + '_' + metric for metric in METRICS]
+        confusion_name = prefix.capitalize() + ' Confusion Matrix'
+
+    metrics, logits = net_container.evaluate(model_container.params, model_container.state, x, y, verbose = False, normalize = False)[1:]
+    conf_matrix = confusion_matrix(y_true = y[0:len(logits)].argmax(1), y_pred = logits.argmax(1), normalize = 'true')
+    metrics_dict = dict(zip(METRICS, metrics))
+
+    print(metrics_dict)
+    
+    sns.heatmap(conf_matrix, annot = True, xticklabels = classnames, yticklabels = classnames).set(title = confusion_name)
+
+    if wandb_run is not None:
+        wandb_run.log(metrics_dict)
+        plots.wandb_log_img(wandb_run, confusion_name)
+
     plt.show()

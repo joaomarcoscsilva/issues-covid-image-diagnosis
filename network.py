@@ -147,6 +147,10 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
             pred = _apply_fn(params, state, None, x, training, return_representation, return_gradcam)[0]
             pred = pred.reshape(-1, *pred.shape[2:])
             preds.append(jax.device_put(pred, jax.devices('cpu')[0]))
+        
+        # Removes the padding in the last batch
+        if X.shape[0] % batch_size != 0:
+            preds[-1] = preds[-1][0:X.shape[0] % batch_size]
 
         # Concatenates all predictions and places them on the cpu
         return jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
@@ -161,7 +165,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         _loss_fn = p_loss_fn if parallel else loss_fn
         
         # Gets a data generator for the dataset
-        datagen, num_batches = dataset.get_datagen(parallel, batch_size, X, Y, include_last = True)
+        datagen, num_batches = dataset.get_datagen(parallel, batch_size, X, Y, include_last = False)
         
         # Lists with all the metrics
         losses = []
@@ -178,12 +182,20 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
             pred = pred.reshape(-1, *pred.shape[2:])
             preds.append(jax.device_put(pred, jax.devices('cpu')[0]))
         
+        # Removes the padding in the last batch
+        if X.shape[0] % batch_size != 0:
+            losses[-1] = losses[-1][0:X.shape[0] % batch_size]
+            metrics[-1] = metrics[-1][0:X.shape[0] % batch_size]
+            preds[-1] = preds[-1][0:X.shape[0] % batch_size]
+
         # Returns the average results
+        losses = np.concatenate(losses).mean()
+        metrics = np.concatenate(metrics).mean(0)
 
-        losses = np.array(losses).mean()
-        metrics = np.array(metrics).mean((0,1))
+        # Puts the predictions on the cpu
+        preds = jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
 
-        return losses, metrics, jax.device_put(np.concatenate(preds), jax.devices('cpu')[0])
+        return losses, metrics, preds
 
     METRICS = ['non_normalized_loss', 'non_normalized_acc', 'normalized_loss', 'normalized_acc']
     VAL_METRICS = ['val_' + s for s in METRICS]    
@@ -198,9 +210,9 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
 
         if metric in METRICS:
             val = metrics[METRICS.index(metric)]
-        elif metric in VAL_METRICS:
+        elif metric in VAL_METRICS and val_metrics is not None:
             val = val_metrics[VAL_METRICS.index(metric)]
-        elif metric in TARGET_METRICS:
+        elif metric in TARGET_METRICS and target_metrics is not None:
             val = target_metrics[TARGET_METRICS.index(metric)]
         else:
             raise ValueError("The given optimizing metric is not supported.")
@@ -216,8 +228,9 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         
 
     def train_epoch(params, state, optim_state, x_train, y_train, x_test = None, y_test = None, 
-    verbose = True, wandb_run = None, classnames = None, final_epoch = False,
+    verbose = True, wandb_run = None, classnames = None, final_epoch = False, current_epoch = None,
     name = '', normalize = False, optimizing_metric = None, current_metric = None, x_target = None, y_target = None):
+        
         """
         Trains the neural network for an epoch.
         If x_test and y_test are passed, evaluates after training.
@@ -238,7 +251,9 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         final_acc = None
             
         # Creates a progress bar for the epoch
-        with tqdm(None, ncols = 350, total = num_batches, disable = not verbose) as bar:
+        with tqdm(None, ncols = 128, total = num_batches, disable = not verbose) as bar:
+            if current_epoch is not None:
+                bar.set_description('Epoch %d' % (current_epoch+1))
         
             # Lists with all the metrics for training
             losses = []
@@ -254,23 +269,25 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
 
                 # Updates the progress bar
                 bar.update()
-                bar.set_postfix(union_dict({'loss': ('%.2f' % _loss)}, 
-                    zip(METRICS, map(lambda x: ('%.2f' % x),_metrics))))
+                #bar.set_postfix(union_dict({'loss': ('%.2f' % _loss)}, 
+                #    zip(METRICS, map(lambda x: ('%.2f' % x),_metrics))))
+                bar.set_postfix({'loss': ('%.2f' % _loss)})
 
                 # Saves the calculated metrics
                 losses.append(_loss)
                 metrics.append(_metrics)
                 
                 if not wandb_run is None:
-                    wandb_run.log(union_dict({'loss': float(_loss)}, zip(METRICS, map(float, _metrics))))
+                    wandb_run.log(union_dict({'loss': float(_loss)}, zip(METRICS, map(float, _metrics))))   
 
             # If available, evaluates on the test set
             if x_test is not None and y_test is not None:
                 val_loss, val_metrics, logits = evaluate(params, state, x_test, y_test, verbose = False, normalize = normalize)
                 
-                bar.set_postfix(union_dict({'loss' : '%.2f' % np.array(losses).mean()},
-                    zip(METRICS, map(lambda m: ('%.2f' % m), np.array(metrics).mean(0))),
-                    zip(VAL_METRICS, map(lambda x: ('%.2f' % x), val_metrics))))
+                #bar.set_postfix(union_dict({'loss' : '%.2f' % np.array(losses).mean()},
+                #    zip(METRICS, map(lambda m: ('%.2f' % m), np.array(metrics).mean(0))),
+                #    zip(VAL_METRICS, map(lambda x: ('%.2f' % x), val_metrics))))
+                bar.set_postfix({'loss' : '%.2f' % np.array(losses).mean()})
 
                 conf_matrix = confusion_matrix(y_true = y_test[0:len(logits)].argmax(1), y_pred = logits.argmax(1), normalize = 'true')
 
@@ -284,10 +301,11 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                 val_metrics = None
 
                 # If available, evaluates on the target set
-            if x_target is not None and y_target is not None and wandb_run is not None:
+            if x_target is not None and y_target is not None:
                 target_loss, target_metrics, logits = evaluate(params, state, x_target, y_target, verbose = False, normalize = normalize)
                 target_metrics_dict = dict(zip(TARGET_METRICS, target_metrics))
-                wandb_run.log(target_metrics_dict)
+                if wandb_run is not None:
+                    wandb_run.log(target_metrics_dict)
             else:
                 target_metrics = None
 
@@ -299,7 +317,8 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
         
         if not final_acc is None and final_epoch:
             sns.heatmap(conf_matrix, annot = True, xticklabels = classnames, yticklabels = classnames)
-            plots.wandb_log_img(wandb_run, "Confusion matrix")
+            if wandb_run is not None:
+                plots.wandb_log_img(wandb_run, "Confusion matrix")
                 
         # Returns the new parameters and state
         return params, state, optim_state, False, current_metric

@@ -59,8 +59,10 @@ def load_data(data_dir):
     """
     Loads all images in a directory to memory in parallel, using the functions above
     """
+
     classes = glob(data_dir + '/*/')
     all_images = []
+    all_paths = []
 
     classes_ordered = []
     classes_not_added = []
@@ -88,16 +90,18 @@ def load_data(data_dir):
     print("CLASS ORDER: ", classes_ordered)
 
     for cls in classes_ordered:
-        images = glob(cls['foldername'] + '/*')
-        images = parallel_map(read_image, images)
+        image_paths = sorted(glob(cls['foldername'] + '/*'))
+        images = parallel_map(read_image, image_paths)
         images = np.array(images)
         all_images.append(images)
+        all_paths.append(image_paths)
+        
     
     ret_classnames = []
     for cls in classes_ordered:
         ret_classnames.append(cls['classname'])
 
-    return all_images, ret_classnames
+    return all_images, ret_classnames, all_paths
 
 resolution = 256
 
@@ -109,12 +113,14 @@ if __name__ == '__main__':
         resolution = int(sys.argv[2])
 
     foldername = sys.argv[1]
-    data, class_names = load_data(foldername)
-    x = np.concatenate(data)
+    data, class_names, paths = load_data(foldername)
 
     y = [np.ones(d.shape[0:1]) * i for i,d in enumerate(data)]
-    y = np.concatenate(y)
     
+    x = np.concatenate(data)
+    y = np.concatenate(y)
+    paths = np.concatenate(paths)
+
     with open(foldername + '/x.npy', 'wb') as f:
         np.save(f, x)
 
@@ -123,5 +129,5 @@ if __name__ == '__main__':
     
     with open(foldername + '/metadata.pickle', 'wb') as f:
         pickle.dump({
-            "classnames": class_names
+            "classnames": class_names, "paths" : paths
         }, f)

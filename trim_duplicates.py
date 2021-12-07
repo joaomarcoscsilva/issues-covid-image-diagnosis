@@ -68,12 +68,13 @@ def plot_similarities(dataset, sims, threshold, wandb_run):
     
     max_sim = sims.max(0)
     ax = sns.histplot(max_sim[max_sim > min_thresh], ax = axs[0])
-    ax.set(title = 'Distribution of the maximum similarity for the images in the dataset')
+    ax.set(title = 'Distribution of the maximum similarity for each images in the dataset')
     _ = ax.vlines(x=threshold, colors='purple', ls='dashed', ymin=0, ymax=ax.get_ylim()[1], label='duplicates threshold')
 
     # Plots 'duplicates' according to threshold
     plt.title('Images with similarity greater than ' + str(threshold) + ' in each class')
     pd.Series(dataset.y_all[:sims.shape[0],][max_sim > threshold].argmax(1)).map(dict(zip(range(len(dataset.classnames)), dataset.classnames))).hist()
+    print(pd.Series(dataset.y_all[:sims.shape[0],][max_sim > threshold].argmax(1)).map(dict(zip(range(len(dataset.classnames)), dataset.classnames))).value_counts())
     plots.wandb_log_img(wandb_run, "Max similarity plot", fig=fig)
 
     max_sims = sims.max(axis=1) - threshold
@@ -181,9 +182,11 @@ def remove_duplicates(suffix, dataset, sims, wandb_run=None):
     # Removes the duplicates from the train and test sets
     x_train_curated = dataset.x_all[keep_train]
     y_train_curated = dataset.y_all[keep_train]
+    paths_train_curated = dataset.paths_all[keep_train]
 
     x_test_curated = dataset.x_all[keep_test]
     y_test_curated = dataset.y_all[keep_test]
+    paths_test_curated = dataset.paths_all[keep_test]
 
     return Dataset(x_train_curated, y_train_curated, x_test_curated, y_test_curated,
-                    dataset.name + "_curated", dataset.classnames, dataset.rng)
+                    dataset.name + "_curated", dataset.classnames, dataset.rng, paths_train_curated, paths_test_curated), duplicate_groups
