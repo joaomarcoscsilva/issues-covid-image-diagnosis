@@ -61,7 +61,6 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             with open(dst_path, "rb") as f:
                 print("Model loaded from", dst_path)
                 loaded_model = pickle.load(f)
-                #return ModelContainer(*loaded_model, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
                 return loaded_model
 
     params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
@@ -117,8 +116,9 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
         with open(dst_path, "wb") as f:
             print("Model saved to", dst_path)
             f.write(model_pk)
-        if wandb_run is not None:
-            wandb.save(dst_path)
+        # Disabled for now because of bandwidth
+        #if wandb_run is not None:
+        #    wandb.save(dst_path)
     
     return pickle.loads(model_pk)
 
