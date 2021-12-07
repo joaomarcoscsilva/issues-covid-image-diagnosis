@@ -14,6 +14,8 @@ mv tawsifur/COVID tawsifur/COVID-19
 mv "mendeley/Pneumonia-Bacterial" "mendeley/Bacterial pneumonia"
 mv "mendeley/Pneumonia-Viral" "mendeley/Viral pneumonia"
 mkdir covidx
+mkdir dup_data
+mkdir models
 cd covidx
 kaggle datasets download -d andyczhao/covidx-cxr2
 unzip covidx-cxr2.zip
@@ -21,9 +23,6 @@ rm covidx-cxr2.zip
 wget https://raw.githubusercontent.com/lindawangg/COVID-Net/master/labels/train_COVIDx9A.txt
 wget https://raw.githubusercontent.com/lindawangg/COVID-Net/master/labels/test_COVIDx9A.txt
 cd ..
-rm -r data
-mkdir dup_data
-mkdir models
-python3 process_data.py mendeley
-python3 process_data.py tawsifur
-python3 process_covidx.py
+#python3 process_data.py mendeley
+#python3 process_data.py tawsifur
+#python3 process_covidx.py

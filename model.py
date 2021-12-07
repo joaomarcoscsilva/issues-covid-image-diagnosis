@@ -21,10 +21,6 @@ class ModelContainer(NamedTuple):
     params: Mapping
     state: Mapping
     optim_state: Mapping
-    x_train_proc: np.array
-    x_test_proc: np.array
-    y_train: np.array
-    y_test: np.array
 
 def init_net_and_optim(x_train, num_classes, batch_size, initial_lr = 1e-1):
     def forward(batch, is_training, return_representation = False, return_gradcam = False, gradcam_counterfactual = False):
@@ -62,7 +58,6 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             with open(dst_path, "rb") as f:
                 print("Model loaded from", dst_path)
                 loaded_model = pickle.load(f)
-                #return ModelContainer(*loaded_model, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
                 return loaded_model
 
     params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
@@ -101,15 +96,16 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
                                                                
         
         if optimizing_metric is None or best_epoch:
-            model = ModelContainer(name, params, state, optim_state, x_train_proc, x_test_proc, dataset.y_train, dataset.y_test)
+            model = ModelContainer(name, params, state, optim_state)
             model_pk = pickle.dumps(model)
             
     if name != '':
         with open(dst_path, "wb") as f:
             print("Model saved to", dst_path)
             f.write(model_pk)
-        if wandb_run is not None:
-            wandb.save(dst_path)
+        # Disabled for now because of bandwidth
+        #if wandb_run is not None:
+        #    wandb.save(dst_path)
     
     model = pickle.loads(bytes(model_pk))
     

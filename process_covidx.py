@@ -78,10 +78,10 @@ if __name__ == '__main__':
     x_test = load_data('covidx/test', y_test)
     
     with open('covidx/x_train.npy', 'wb') as f:
-        np.save(f, x_train)
+        np.savez(f, x_train)
 
     with open('covidx/x_test.npy', 'wb') as f:
-        np.save(f, x_test)
+        np.savez(f, x_test)
 
     d = {'normal' : 0, 'pneumonia' : 1, 'COVID-19' : 2}
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     y_test = list(map(d.get, y_test.values()))
 
     with open('covidx/y_train.npy', 'wb') as f:
-        np.save(f, y_train)
+        np.savez(f, y_train)
 
     with open('covidx/y_test.npy', 'wb') as f:
-        np.save(f, y_test)
+        np.savez(f, y_test)
