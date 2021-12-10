@@ -1,0 +1,23 @@
+{   
+    "name": "cv_tawsifur",
+
+    "random_seed" : 14,
+
+    "batch_size" : 128,
+    "resolution" : 256,
+    "initial_lr" : 1e-2,
+    "num_epochs" : 30,
+    
+    "normalize_loss" : true,
+
+    "dataset" : "tawsifur",
+    "drop_classes" : [],
+    "official_split" : false,
+
+    "target_dataset" : null,
+    "target_drop_classes" : [],
+    "target_official_split" : true,
+
+    "optimizing_metric" : "+val_normalized_acc",
+    "validation_size" : 0.1
+}

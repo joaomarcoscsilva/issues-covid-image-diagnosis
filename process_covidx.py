@@ -92,7 +92,7 @@ if __name__ == '__main__':
     y_test = list(map(d.get, y_test.values()))
 
     with open('covidx/y_train.npy', 'wb') as f:
-        np.savez(f, y_train)
+        np.save(f, y_train)
 
     with open('covidx/y_test.npy', 'wb') as f:
         np.save(f, y_test)

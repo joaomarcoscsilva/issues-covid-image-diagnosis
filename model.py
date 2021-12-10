@@ -44,7 +44,9 @@ def init_net_and_optim(data, batch_size, initial_lr = 1e-1, num_epochs = 30):
 def get_persistent_fields(model):
     return (model.name, model.params, model.state, model.optim_state)
 
-def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, classnames = None, normalize = False, optimizing_metric = None, validation_size = None, target_data = None, force_save = False, initialization = None) -> ModelContainer:
+def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None,
+                normalize = False, optimizing_metric = None, validation_size = None, target_data = None, force_save = False,
+                initialization = None, save_weights_to_wandb = False) -> ModelContainer:
     """Trains the network specified at net_container, in the given dataset.
        If models/name exists, returns the cached version. Otherwise, trains the model then saves it to model/name.
 
@@ -116,9 +118,8 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
         with open(dst_path, "wb") as f:
             print("Model saved to", dst_path)
             f.write(model_pk)
-        # Disabled for now because of bandwidth
-        #if wandb_run is not None:
-        #    wandb.save(dst_path)
+        if save_weights_to_wandb and wandb_run is not None:
+            wandb.save(dst_path)
     
     return pickle.loads(model_pk)
 

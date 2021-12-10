@@ -1,0 +1,1 @@
+python3 run.py runs/initial_runs/$1.json --wandb --name "cv_$1" --cv 5 --dedup --save-only-first
