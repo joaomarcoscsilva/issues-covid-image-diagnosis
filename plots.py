@@ -53,7 +53,7 @@ def compare_images(images_a, images_b, rows):
         plt.axis('off')
 
 def compare_n_images(images_tuples, rows):
-    fig = plt.figure(figsize=(16, 30))
+    fig = plt.figure(figsize=(16, 16))
 
     columns = 10
     k = 1
