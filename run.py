@@ -1,3 +1,5 @@
+from visuals import *
+
 import matplotlib.pyplot as plt
 import argparse
 import json
