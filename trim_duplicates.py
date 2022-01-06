@@ -63,19 +63,21 @@ min_tol = 0.06
 min_thresh = 0.95
 
 def plot_similarities(dataset, sims, threshold, wandb_run):
-    # Plots distribution of maximum similarity
-    fig, axs = plt.subplots(1, 2, figsize = (15,5))
-    
+    # Plots distribution of maximum similarity    
+    plt.clf()
     max_sim = sims.max(0)
-    ax = sns.histplot(max_sim[max_sim > min_thresh], ax = axs[0])
+    ax = sns.histplot(max_sim[max_sim > min_thresh], bins=88)
     ax.set(title = 'Distribution of the maximum similarity for each images in the dataset')
-    _ = ax.vlines(x=threshold, colors='purple', ls='dashed', ymin=0, ymax=ax.get_ylim()[1], label='duplicates threshold')
+    ax.set(xlim=(0.965, 1.0))
+    ax.vlines(x=threshold, colors='purple', ls='dashed', ymin=0, ymax=ax.get_ylim()[1], label='duplicates threshold')
+    plots.wandb_log_img(wandb_run, "Max histogram plot")
 
     # Plots 'duplicates' according to threshold
+    plt.clf()
     plt.title('Images with similarity greater than ' + str(threshold) + ' in each class')
     pd.Series(dataset.y_all[:sims.shape[0],][max_sim > threshold].argmax(1)).map(dict(zip(range(len(dataset.classnames)), dataset.classnames))).hist()
     print(pd.Series(dataset.y_all[:sims.shape[0],][max_sim > threshold].argmax(1)).map(dict(zip(range(len(dataset.classnames)), dataset.classnames))).value_counts())
-    plots.wandb_log_img(wandb_run, "Max similarity plot", fig=fig)
+    plots.wandb_log_img(wandb_run, "Max similarity plot")
 
     max_sims = sims.max(axis=1) - threshold
     max_sims_index = sims.argmax(axis=1)

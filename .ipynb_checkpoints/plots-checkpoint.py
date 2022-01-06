@@ -24,7 +24,9 @@ def heatmatrix(matrix, title, classnames):
     plt.show()
 
 def wandb_log_img(wandb_run, title, show=True, fig=None):
-    if wandb_run is not None:    
+    if wandb_run is not None:
+        # Saves fig
+        fig.savefig("figs/" + wandb_run.name + "_" + title + ".png")
         wandb_run.log({
             title: wandb.Image(plt.gcf()) if fig is None else wandb.Image(fig)
         })

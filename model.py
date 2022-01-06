@@ -140,6 +140,7 @@ def evaluate_model(net_container, model_container, x, y, classnames, prefix = ''
 
     print(metrics_dict)
     
+    plt.clf()
     sns.heatmap(conf_matrix, annot = True, xticklabels = classnames, yticklabels = classnames).set(title = confusion_name)
 
     if wandb_run is not None:

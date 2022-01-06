@@ -11,6 +11,7 @@ from IPython import embed
 import plots
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 class NetworkContainer(NamedTuple):
     init_fn: Callable
@@ -316,6 +317,7 @@ def create(net, optim, batch_size = 128, parallel = True, shape = (10, 256, 256,
                 return params, state, optim_state, True, current_metric
         
         if not final_acc is None and final_epoch:
+            plt.clf()
             sns.heatmap(conf_matrix, annot = True, xticklabels = classnames, yticklabels = classnames)
             if wandb_run is not None:
                 plots.wandb_log_img(wandb_run, "Confusion matrix")

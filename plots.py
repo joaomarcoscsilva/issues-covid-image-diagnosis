@@ -5,6 +5,8 @@ import math
 import wandb
 
 def confusion_matrix(dataset, y_pred, title, test = True, classnames = None):
+    plt.clf()
+
     if test:
         data = dataset.y_test
     else:
@@ -17,6 +19,7 @@ def confusion_matrix(dataset, y_pred, title, test = True, classnames = None):
     plt.show()
 
 def heatmatrix(matrix, title, classnames):
+    plt.clf()
     sns.heatmap(matrix,
                 annot = True,
                 xticklabels = classnames,
@@ -24,9 +27,12 @@ def heatmatrix(matrix, title, classnames):
     plt.show()
 
 def wandb_log_img(wandb_run, title, show=True, fig=None):
+    fig = plt.gcf() if fig is None else fig
+
     if wandb_run is not None:    
+        fig.savefig("figs/" + wandb_run.config["name"] + "_" + title + ".png")
         wandb_run.log({
-            title: wandb.Image(plt.gcf()) if fig is None else wandb.Image(fig)
+            title: wandb.Image(fig)
         })
 
     if show:
@@ -36,6 +42,7 @@ def wandb_log_img(wandb_run, title, show=True, fig=None):
             fig.show()
 
 def compare_images(images_a, images_b, rows):
+    plt.clf()
     fig = plt.figure(figsize=(32, 12))
 
     columns = 10
@@ -53,6 +60,7 @@ def compare_images(images_a, images_b, rows):
         plt.axis('off')
 
 def compare_n_images(images_tuples, rows):
+    plt.clf()
     fig = plt.figure(figsize=(16, 16))
 
     columns = 10
