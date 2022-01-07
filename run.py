@@ -68,6 +68,7 @@ if config['target_dataset'] is not None:
 else:
     target_data = None
 
+# TODO: Create conf matrix w/ std and means
 
 if args.cv_id is not None:
     config['cv_id'] = args.cv_id

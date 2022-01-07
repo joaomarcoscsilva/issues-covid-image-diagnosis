@@ -10,7 +10,7 @@
     
     "normalize_loss" : true,
 
-    "dataset" : "covidx",
+    "dataset" : "covidx_curated",
     "dup_indices": "dup_data/covidx_dup_indices.json",
 
     "drop_classes" : [],

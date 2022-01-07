@@ -68,7 +68,7 @@ def plot_similarities(dataset, sims, threshold, wandb_run):
     max_sim = sims.max(0)
     ax = sns.histplot(max_sim[max_sim > min_thresh], bins=88)
     ax.set(title = 'Distribution of the maximum similarity for each images in the dataset')
-    ax.set(xlim=(0.965, 1.0))
+    ax.set(xlim=(0.985, 1.0))
     ax.vlines(x=threshold, colors='purple', ls='dashed', ymin=0, ymax=ax.get_ylim()[1], label='duplicates threshold')
     plots.wandb_log_img(wandb_run, "Max histogram plot")
 

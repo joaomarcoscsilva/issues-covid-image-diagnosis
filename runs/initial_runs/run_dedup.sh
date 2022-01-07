@@ -1,0 +1,1 @@
+python3 run.py runs/initial_runs/$1.json --wandb --name "cv_$1_nodups" --cv 5
