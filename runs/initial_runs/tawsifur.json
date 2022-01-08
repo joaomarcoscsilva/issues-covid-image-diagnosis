@@ -10,7 +10,7 @@
     
     "normalize_loss" : true,
 
-    "dataset" : "tawsifur_curated",
+    "dataset" : "tawsifur",
     "drop_classes" : [],
     "official_split" : false,
 

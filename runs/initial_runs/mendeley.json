@@ -10,7 +10,7 @@
     
     "normalize_loss" : true,
 
-    "dataset" : "mendeley_curated",
+    "dataset" : "mendeley",
     "drop_classes" : [],
     "official_split" : false,
 
