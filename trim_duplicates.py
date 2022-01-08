@@ -163,7 +163,7 @@ def remove_duplicates(suffix, dataset, sims, wandb_run=None):
 
     if wandb_run is not None:
         dup_data = DuplicatesData(dataset.rng, duplicate_groups)
-        fname = "dup_data/" + wandb_run.name + suffix + ".pickle"
+        fname = "dup_data/" + wandb_run.config['name'] + suffix + ".pickle"
         dup_data.save(fname)
         wandb_run.save(fname)
 
