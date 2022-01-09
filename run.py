@@ -1,3 +1,5 @@
+from visuals import *
+
 import matplotlib.pyplot as plt
 import argparse
 import json
@@ -8,6 +10,7 @@ import os
 # Use argparse to get the command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('config_file', type=str, help = "The path to a json configuration file.")
+parser.add_argument('--save-only-first', action = 'store_true', help = "Set this to true to save the weights to W&B.", default = False)
 parser.add_argument('--wandb', action = 'store_true', help = "Whether or not to log the experiment to weights and biases.", default = False)
 parser.add_argument('--save', help = "Whether or not to save the trained weights.", action = 'store_true', default = False)
 parser.add_argument('--load', help = "Path of a pickle file containing pretrained weights.", default = False)
@@ -31,6 +34,10 @@ assert not (args.split_dedup and not args.save_dedup), "To split a deduplicated 
 if args.cv is not None and args.cv_id is None:
     for i in range(args.cv):
         call_argv = ['python3'] + sys.argv + ['--cv-id %d' % i]
+
+        if args.save_only_first and i == 0 and not args.save:
+            call_argv.append('--save')
+
         os.system(' '.join(call_argv))
     exit()
         
@@ -62,6 +69,7 @@ if 'target_datasets' in config and config['target_datasets'] is not None:
     for target_name, target_drop_classes, target_official_split in zip(config['target_datasets'], config['targets_drop_classes'], config['targets_official_splits']):
         target_datas.append(Dataset.load("data/" + target_name, rng=r2, drop_classes = target_drop_classes, official_split = target_official_split))
 
+# TODO: Create conf matrix w/ std and means
 
 if args.cv_id is not None:
     config['cv_id'] = args.cv_id
@@ -69,7 +77,7 @@ if args.cv_id is not None:
     config['group'] = config['name']
     config['name'] = config['name'] + '_' + str(args.cv_id)
 
-wandb_run = wandb.init(project='xrays', entity='usp-covid-xrays', reinit=True, config = config) if args.wandb else None
+wandb_run = wandb.init(project='xrays', entity='usp-covid-xrays', name=name, reinit=True, config = config) if args.wandb else None
 
 if not args.pixel_space:
 
@@ -80,12 +88,10 @@ if not args.pixel_space:
     net, optim = model.init_net_and_optim(data, config['batch_size'], initial_lr = config['initial_lr'], num_epochs = config['num_epochs'])
     net_container = network.create(net, optim, config['batch_size'], shape = (10, config['resolution'], config['resolution'], 3))
 
-    
-
-    trained_model = model.train_model(config['name'] if args.save else '', net_container, lambda x: x, data, masks = None, classnames = data.classnames, num_epochs = config['num_epochs'],
+    trained_model = model.train_model(config['name'] if args.save else '', net_container, lambda x: x, data, masks = None, num_epochs = config['num_epochs'],
                                     wandb_run = wandb_run, rng = rng,
                                     normalize = config['normalize_loss'], optimizing_metric = config['optimizing_metric'], validation_size = config['validation_size'],
-                                    target_datas = target_datas, force_save = args.force)
+                                    target_datas = target_datas, force_save = args.force, save_weights_to_wandb=False)
 
     if config['validation_size'] is not None and config['validation_size'] > 0:
         model.evaluate_model(net_container, trained_model, data.x_test, data.y_test, data.classnames, prefix = 'test', wandb_run = wandb_run)

@@ -62,8 +62,9 @@ class Dataset:
         keep_classes = jnp.array([i for i in range(num_classes) if i not in drop_classes])
         
         if 'x.npy' in os.listdir(dataset_name) or not official_split:
-            if not official_split:
-                assert 'x_train.npy' in os.listdir(dataset_name) and 'x_test.npy' in os.listdir(dataset_name), 'Setting official_split to False is only supported for datasets with an official train-test split'
+            
+            if official_split:
+                'x_train.npy' in os.listdir(dataset_name) and 'x_test.npy' in os.listdir(dataset_name), 'Setting official_split to False is only supported for datasets with an official train-test split'
                 x_train = jax.device_put(jnp.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
                 y_train = jax.device_put(jnp.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
                 x_test = jax.device_put(jnp.load(dataset_name + '/x_test.npy'), jax.devices('cpu')[0])

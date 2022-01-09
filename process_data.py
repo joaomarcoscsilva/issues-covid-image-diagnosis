@@ -122,10 +122,10 @@ if __name__ == '__main__':
     paths = np.concatenate(paths)
 
     with open(foldername + '/x.npy', 'wb') as f:
-        np.savez(f, x)
+        np.save(f, x)
 
     with open(foldername + '/y.npy', 'wb') as f:
-        np.savez(f, y)
+        np.save(f, y)
     
     with open(foldername + '/metadata.pickle', 'wb') as f:
         pickle.dump({
