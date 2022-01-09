@@ -56,10 +56,11 @@ import trim_duplicates
 r1, r2 = jax.random.split(jax.random.PRNGKey(1))
 
 data = Dataset.load("data/" + config['dataset'], rng=r1, drop_classes = config['drop_classes'], official_split = config['official_split'])
-if config['target_dataset'] is not None:
-    target_data = Dataset.load("data/" + config['target_dataset'], rng=r2, drop_classes = config['target_drop_classes'], official_split = config['target_official_split'])
-else:
-    target_data = None
+
+target_datas = []
+if 'target_datasets' in config and config['target_datasets'] is not None:
+    for target_name, target_drop_classes, target_official_split in zip(config['target_datasets'], config['targets_drop_classes'], config['targets_official_splits']):
+        target_datas.append(Dataset.load("data/" + target_name, rng=r2, drop_classes = target_drop_classes, official_split = target_official_split))
 
 
 if args.cv_id is not None:
@@ -84,14 +85,14 @@ if not args.pixel_space:
     trained_model = model.train_model(config['name'] if args.save else '', net_container, lambda x: x, data, masks = None, classnames = data.classnames, num_epochs = config['num_epochs'],
                                     wandb_run = wandb_run, rng = rng,
                                     normalize = config['normalize_loss'], optimizing_metric = config['optimizing_metric'], validation_size = config['validation_size'],
-                                    target_data = target_data, force_save = args.force)
+                                    target_datas = target_datas, force_save = args.force)
 
     if config['validation_size'] is not None and config['validation_size'] > 0:
         model.evaluate_model(net_container, trained_model, data.x_test, data.y_test, data.classnames, prefix = 'test', wandb_run = wandb_run)
         plt.show()
-
-    if config['target_dataset'] is not None:
-        model.evaluate_model(net_container, trained_model, target_data.x_all, target_data.y_all, target_data.classnames, prefix = 'target', wandb_run = wandb_run)
+    
+    for target_data in target_datas:
+        model.evaluate_model(net_container, trained_model, target_data.x_all, target_data.y_all, target_data.classnames, prefix = target_data.name, wandb_run = wandb_run)
         plt.show()
 
 if args.dedup:

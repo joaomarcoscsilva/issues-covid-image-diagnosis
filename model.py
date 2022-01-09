@@ -44,7 +44,7 @@ def init_net_and_optim(data, batch_size, initial_lr = 1e-1, num_epochs = 30):
 def get_persistent_fields(model):
     return (model.name, model.params, model.state, model.optim_state)
 
-def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, classnames = None, normalize = False, optimizing_metric = None, validation_size = None, target_data = None, force_save = False, initialization = None) -> ModelContainer:
+def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng = jax.random.PRNGKey(42), masks = None, wandb_run = None, classnames = None, normalize = False, optimizing_metric = None, validation_size = None, target_datas = [], force_save = False, initialization = None) -> ModelContainer:
     """Trains the network specified at net_container, in the given dataset.
        If models/name exists, returns the cached version. Otherwise, trains the model then saves it to model/name.
 
@@ -93,12 +93,9 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
             _x_test = x_test_proc
             _y_test = dataset.y_test
 
-        if target_data is not None:
-            _x_target = process_fn(target_data.x_all)
-            _y_target = target_data.y_all
-        else:
-            _x_target = None
-            _y_target = None
+        _x_targets = [process_fn(target_data.x_all) for target_data in target_datas]
+        _y_targets = [target_data.y_all for target_data in target_datas]
+        _target_names = [target_data.name for target_data in target_datas]
 
         params, state, optim_state, best_epoch, current_metric = net_container.train_epoch(params, state, optim_state, _x_train,
                                                                _y_train, _x_test, _y_test,
@@ -106,7 +103,7 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
                                                                name = name, normalize = normalize, 
                                                                optimizing_metric = optimizing_metric, current_metric = current_metric,
                                                                final_epoch = epoch_i == num_epochs-1, current_epoch = epoch_i,
-                                                               x_target = _x_target, y_target = _y_target)
+                                                               x_targets = _x_targets, y_targets = _y_targets, target_names = _target_names)
                                                                
         
         if optimizing_metric is None or best_epoch:
