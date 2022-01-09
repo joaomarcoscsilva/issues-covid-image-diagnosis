@@ -64,11 +64,14 @@ r1, r2 = jax.random.split(jax.random.PRNGKey(1))
 
 data = Dataset.load("data/" + config['dataset'], rng=r1, drop_classes = config['drop_classes'], official_split = config['official_split'])
 
+<<<<<<< HEAD
 target_datas = []
 if 'target_datasets' in config and config['target_datasets'] is not None:
     for target_name, target_drop_classes, target_official_split in zip(config['target_datasets'], config['targets_drop_classes'], config['targets_official_splits']):
         target_datas.append(Dataset.load("data/" + target_name, rng=r2, drop_classes = target_drop_classes, official_split = target_official_split))
 
+=======
+>>>>>>> 0fe91b0f39d5705c100c384e43391ab1b1a30721
 # TODO: Create conf matrix w/ std and means
 
 if args.cv_id is not None:
