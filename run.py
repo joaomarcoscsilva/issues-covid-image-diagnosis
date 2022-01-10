@@ -64,14 +64,11 @@ r1, r2 = jax.random.split(jax.random.PRNGKey(1))
 
 data = Dataset.load("data/" + config['dataset'], rng=r1, drop_classes = config['drop_classes'], official_split = config['official_split'])
 
-<<<<<<< HEAD
 target_datas = []
 if 'target_datasets' in config and config['target_datasets'] is not None:
     for target_name, target_drop_classes, target_official_split in zip(config['target_datasets'], config['targets_drop_classes'], config['targets_official_splits']):
         target_datas.append(Dataset.load("data/" + target_name, rng=r2, drop_classes = target_drop_classes, official_split = target_official_split))
 
-=======
->>>>>>> 0fe91b0f39d5705c100c384e43391ab1b1a30721
 # TODO: Create conf matrix w/ std and means
 
 if args.cv_id is not None:
@@ -92,9 +89,9 @@ if not args.pixel_space:
     net_container = network.create(net, optim, config['batch_size'], shape = (10, config['resolution'], config['resolution'], 3))
 
     trained_model = model.train_model(config['name'] if args.save else '', net_container, lambda x: x, data, masks = None, num_epochs = config['num_epochs'],
-                                    wandb_run = wandb_run, rng = rng,
+                                    wandb_run = wandb_run, rng = rng, 
                                     normalize = config['normalize_loss'], optimizing_metric = config['optimizing_metric'], validation_size = config['validation_size'],
-                                    target_datas = target_datas, force_save = args.force, save_weights_to_wandb=False)
+                                    target_datas = target_datas, force_save = args.force, initialization = args.load, save_weights_to_wandb=False)
 
     if config['validation_size'] is not None and config['validation_size'] > 0:
         model.evaluate_model(net_container, trained_model, data.x_test, data.y_test, data.classnames, prefix = 'test', wandb_run = wandb_run)

@@ -16,6 +16,7 @@ import wandb
 from dataset import train_test_split
 from copy import deepcopy
 import plots
+from flax2haiku import load_imagenet_resnet
 
 class ModelContainer(NamedTuple):
     name: str
@@ -27,7 +28,7 @@ def init_net_and_optim(data, batch_size, initial_lr = 1e-1, num_epochs = 30):
     num_classes = len(data.classnames)
 
     def forward(batch, is_training, return_representation = False, return_gradcam = False, gradcam_counterfactual = False):
-        net = resnet.ResNet18(num_classes = num_classes, resnet_v2 = True)
+        net = resnet.ResNet18(num_classes = num_classes, resnet_v2 = False)
         if return_representation:
             return net.embedding(batch, is_training, embedding_depth=0)
         elif return_gradcam:
@@ -65,13 +66,18 @@ def train_model(name, net_container, process_fn, dataset, num_epochs = 30, rng =
                 loaded_model = pickle.load(f)
                 return loaded_model
 
-    params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
-
-    if initialization is not None:
+    if initialization is None:
         params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
-    
-        with open(initialization, "rb") as f:
-            params, state = get_persistent_fields(pickle.load(f))[1:3]
+
+    else:
+        params, state, optim_state = net_container.init_fn(jax.random.split(rng)[0])
+
+        if initialization == 'imagenet':
+            old_params = params
+            params = load_imagenet_resnet(params)
+        else:
+            with open(initialization, "rb") as f:
+                params, state = get_persistent_fields(pickle.load(f))[1:3]
 
     rng = jax.random.split(rng)[0]
 
