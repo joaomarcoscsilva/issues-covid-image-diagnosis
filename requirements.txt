@@ -1,4 +1,5 @@
 jax
+jaxlib
 dm-haiku
 optax
 tqdm
@@ -11,3 +12,4 @@ kaggle
 ipykernel
 matplotlib
 sklearn
+jax-resnet

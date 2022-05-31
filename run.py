@@ -24,6 +24,7 @@ parser.add_argument('--save-dedup', help = "If set, will save the deduplicated d
 parser.add_argument('--split-dedup', help = "If set, the deduplicated dataset will be split into train and test sets.", action = 'store_true', default = False)
 parser.add_argument('--pixel-space', help = "If set, will run the deduplication in pixel space. This option also skips training as a whole.", action = 'store_true', default = False)
 
+parser.add_argument('--cpu', help = "If set, will only use the cpu.", action = 'store_true', default = False)
 args = parser.parse_args()
 
 assert not (args.cv is None and args.cv_id is not None), "You must specify the amount of cross-validation folds using the --cv command line option."
@@ -53,7 +54,11 @@ config['name'] = name
 
 import wandb
 import jax
-assert jax.local_device_count() == 8, "No TPU available"
+
+if args.cpu:
+    jax.config.update('jax_platform_name', 'cpu')
+else:
+    assert jax.local_device_count() == 8, "No TPU available"
 
 from dataset import Dataset
 import model, network
@@ -62,7 +67,7 @@ import trim_duplicates
 # Initialize the random seed
 r1, r2 = jax.random.split(jax.random.PRNGKey(1))
 
-data = Dataset.load("data/" + config['dataset'], rng=r1, drop_classes = config['drop_classes'], official_split = config['official_split'])
+data = Dataset.load(config['dataset'], rng=r1, drop_classes = config['drop_classes'], official_split = config['official_split'])
 
 target_datas = []
 if 'target_datasets' in config and config['target_datasets'] is not None:

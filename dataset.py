@@ -64,18 +64,18 @@ class Dataset:
         if 'x.npy' in os.listdir(dataset_name) or not official_split:
             if not official_split:
                 assert 'x_train.npy' in os.listdir(dataset_name) and 'x_test.npy' in os.listdir(dataset_name), 'Setting official_split to False is only supported for datasets with an official train-test split'
-                x_train = jax.device_put(jnp.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
-                y_train = jax.device_put(jnp.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
-                x_test = jax.device_put(jnp.load(dataset_name + '/x_test.npy'), jax.devices('cpu')[0])
-                y_test = jax.device_put(jnp.load(dataset_name +'/y_test.npy'), jax.devices('cpu')[0])
+                x_train = jax.device_put(np.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
+                y_train = jax.device_put(np.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
+                x_test = jax.device_put(np.load(dataset_name + '/x_test.npy'), jax.devices('cpu')[0])
+                y_test = jax.device_put(np.load(dataset_name +'/y_test.npy'), jax.devices('cpu')[0])
 
                 x = jnp.concatenate([x_train, x_test])
                 y = jnp.concatenate([y_train, y_test])
                 paths = np.concatenate([metadata['paths_train'], metadata['paths_test']])
 
             else:
-                x = jax.device_put(jnp.load(dataset_name + '/x.npy'), jax.devices('cpu')[0])
-                y = jax.device_put(jnp.load(dataset_name +'/y.npy'), jax.devices('cpu')[0])
+                x = jax.device_put(np.load(dataset_name + '/x.npy'), jax.devices('cpu')[0])
+                y = jax.device_put(np.load(dataset_name +'/y.npy'), jax.devices('cpu')[0])
                 paths = metadata['paths']
 
             
@@ -94,10 +94,10 @@ class Dataset:
             y_test = y_test[:, keep_classes]
 
         else:
-            x_train = jax.device_put(jnp.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
-            y_train = jax.device_put(jnp.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
-            x_test = jax.device_put(jnp.load(dataset_name + '/x_test.npy'), jax.devices('cpu')[0])
-            y_test = jax.device_put(jnp.load(dataset_name +'/y_test.npy'), jax.devices('cpu')[0])
+            x_train = jax.device_put(np.load(dataset_name + '/x_train.npy'), jax.devices('cpu')[0])
+            y_train = jax.device_put(np.load(dataset_name +'/y_train.npy'), jax.devices('cpu')[0])
+            x_test = jax.device_put(np.load(dataset_name + '/x_test.npy'), jax.devices('cpu')[0])
+            y_test = jax.device_put(np.load(dataset_name +'/y_test.npy'), jax.devices('cpu')[0])
             paths_train = metadata['paths_train']
             paths_test = metadata['paths_test']
 
@@ -110,7 +110,7 @@ class Dataset:
 
             x_train = x_train[ids_train]
             y_train = y_train[ids_train]
-            paths_train = paths_train[ids_train]
+            paths_train = np.array(paths_train)[ids_train]
 
             ids_test = jnp.arange(0, len(x_test))
             ids_test = ids_test[jnp.isin(y_test.argmax(1), keep_classes)]
@@ -118,7 +118,7 @@ class Dataset:
 
             x_test = x_test[ids_test]
             y_test = y_test[ids_test]
-            paths_test = paths_test[ids_test]
+            paths_test = np.array(paths_test)[ids_test]
 
             y_train = y_train[:, keep_classes]
             y_test = y_test[:, keep_classes]
@@ -161,11 +161,22 @@ class Dataset:
         paths_train = self.paths_all[test_samples:]
 
         return Dataset(x_train, y_train, x_test, y_test, self.dataset_name, self.classnames, self.rng, paths_train, paths_test)
-        
-        
+
+    @staticmethod    
+    def merge(datasets):
+        x_train = jnp.concatenate([d.x_train for d in datasets])
+        paths_train = np.concatenate([d.paths_train for d in datasets])
+
+        x_test = jnp.concatenate([d.x_test for d in datasets])
+        paths_test = np.concatenate([d.paths_test for d in datasets])
+
+        classnames = datasets[0].classnames
+
+        # todo: merge different classes
+    
 
 def train_test_split(*args, test_size = 0.2, rng = None):
-    ids = np.arange(0, len(args[0]))
+    ids = jnp.arange(0, len(args[0]))
     if rng is not None:
         ids = jax.random.permutation(rng, ids)
 

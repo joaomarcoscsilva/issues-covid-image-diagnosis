@@ -1,0 +1,16 @@
+{
+    "random_seed": 14,
+    "batch_size": 128,
+    "resolution": 256,
+    "initial_lr": 1e-1,
+    "num_epochs": 30,
+    "normalize_loss": true,
+    "dataset": "covidx",
+    "drop_classes": [],
+    "official_split": true,
+    "target_datasets": [],
+    "targets_drop_classes": [],
+    "targets_official_splits": [],
+    "optimizing_metric": "+val_normalized_acc",
+    "validation_size": 0.1
+}

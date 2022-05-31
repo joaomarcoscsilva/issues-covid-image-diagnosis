@@ -99,5 +99,5 @@ if __name__ == '__main__':
 
     with open('covidx/metadata.pickle', 'wb') as f:
         pickle.dump({
-            "classnames": ['Normal', 'Pneumonia', 'COVID-19'], "train_paths" : train_paths, "test_paths" : test_paths
+            "classnames": ['Normal', 'Pneumonia', 'COVID-19'], "paths_train" : train_paths, "paths_test" : test_paths
         }, f)

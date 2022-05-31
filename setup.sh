@@ -1,6 +1,6 @@
 # BEFORE RUNNING: Add kaggle.json to ~/.kaggle/
-./download_mendeley.sh
 pip3 install -r requirements
+./download_mendeley.sh
 sudo apt-get update
 sudo apt-get install ffmpeg libsm6 libxext6  -y
 mv data/curated_xray_dataset/ mendeley/

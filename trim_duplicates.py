@@ -36,7 +36,6 @@ class DuplicatesData:
 
 @partial(jax.vmap, in_axes = (None, 0))
 @partial(jax.vmap, in_axes = (0, None))
-
 def cosine_similarity(x,y):
     return jnp.dot(x,y) / jnp.sqrt(jnp.dot(x,x) * jnp.dot(y,y))
 
@@ -119,9 +118,12 @@ def remove_duplicates(suffix, dataset, sims, wandb_run=None):
     duplicate_groups = set()
 
     for i in tqdm(range(len(dataset.x_all))):
+
+        idx = list(map(int, np.nonzero(sims[i] > thresh)[0]))
+
         if i not in one_duplicate:
-            one_duplicate = one_duplicate.union(set(list(np.nonzero(sims[i] > thresh)[0])))
-        duplicate_groups.add(tuple(sorted(list(np.nonzero(sims[i] > thresh)[0]) + [i])))
+            one_duplicate = one_duplicate.union(set(idx))
+        duplicate_groups.add(tuple(sorted(idx + [i])))
     
     dup_count = len(dataset.x_all) - len(duplicate_groups)
     
@@ -161,10 +163,11 @@ def remove_duplicates(suffix, dataset, sims, wandb_run=None):
     print('Duplicates found in train set:', num_train_duplicates)
     print('Leaked examples from the test set:', num_leaked_duplicates)
 
+    dup_data = DuplicatesData(dataset.rng, duplicate_groups)
+    fname = "dup_data/" + wandb_run.config['name'] + suffix + ".pickle"
+    dup_data.save(fname)
+
     if wandb_run is not None:
-        dup_data = DuplicatesData(dataset.rng, duplicate_groups)
-        fname = "dup_data/" + wandb_run.config['name'] + suffix + ".pickle"
-        dup_data.save(fname)
         wandb_run.save(fname)
 
         wandb_run.log({

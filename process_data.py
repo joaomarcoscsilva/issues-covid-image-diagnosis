@@ -91,6 +91,10 @@ def load_data(data_dir):
 
     for cls in classes_ordered:
         image_paths = sorted(glob(cls['foldername'] + '/*'))
+        
+        if len(image_paths) == 2:
+            image_paths = sorted(glob(cls['foldername'] + '/images/*'))
+
         images = parallel_map(read_image, image_paths)
         images = np.array(images)
         all_images.append(images)
@@ -106,7 +110,7 @@ def load_data(data_dir):
 resolution = 256
 
 # If running as a script, loads all images from the data directory and
-# saves them as "x.npy" and "y.npy" in the current directory
+# saves them as "x.npy" and "y.npy" in that same directory
 if __name__ == '__main__':
     
     if len(sys.argv) >= 3 and sys.argv[2].isdigit():

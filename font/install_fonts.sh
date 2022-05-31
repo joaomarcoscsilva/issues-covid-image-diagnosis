@@ -5,7 +5,6 @@ cp *.ttf ~/.local/share/fonts/
 fc-cache -f -v
 fc-list | grep Libertine
 python3
-import shutil
-import matplotlib
+import shutil, matplotlib
 shutil.rmtree(matplotlib.get_cachedir())
 quit()
