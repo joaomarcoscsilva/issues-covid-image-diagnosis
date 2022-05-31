@@ -164,16 +164,21 @@ class Dataset:
 
     @staticmethod    
     def merge(datasets):
+        
+        assert np.all([d.classnames == datasets[0].classnames for d in datasets]), 'Classnames must be the same for all datasets'
+
         x_train = jnp.concatenate([d.x_train for d in datasets])
+        y_train = jnp.concatenate([d.y_train for d in datasets])
         paths_train = np.concatenate([d.paths_train for d in datasets])
 
         x_test = jnp.concatenate([d.x_test for d in datasets])
+        y_test = jnp.concatenate([d.y_test for d in datasets])
         paths_test = np.concatenate([d.paths_test for d in datasets])
 
         classnames = datasets[0].classnames
+        name = '_'.join([d.name for d in datasets])
 
-        # todo: merge different classes
-    
+        return Dataset(x_train, y_train, x_test, y_test, name, classnames, datasets[0].rng, paths_train, paths_test)
 
 def train_test_split(*args, test_size = 0.2, rng = None):
     ids = jnp.arange(0, len(args[0]))

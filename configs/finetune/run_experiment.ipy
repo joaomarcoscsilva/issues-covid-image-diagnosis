@@ -1,0 +1,28 @@
+import json
+
+datasets = ['mendeley_curated', 'tawsifur_curated', 'covidx_curated']
+%cd ../..
+
+for source in datasets:
+    
+    !python3 run.py --cv 5 configs/crossdata/{source}.json --wandb --save --name pretrained_{source} -f
+
+    for target in datasets:
+        if target == source:
+            continue
+        
+        with open(f'configs/crossdata/{target}.json') as f:
+            template = json.load(f)
+
+        template['target_datasets'] = []
+        template['targets_drop_classes'] = []
+        template['targets_official_splits'] = []
+        template['initial_lr'] = 1e-2
+
+        for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
+            template['validation_size'] = i
+            with open(f'configs/crossdata/config.json', 'w') as f:
+                json.dump(template, f, indent = 4)
+            
+            !python3 run.py configs/crossdata/config.json --load pretrained_{source} --wandb --name finetune_{target}_validation_size_{i}
+            

@@ -13,7 +13,7 @@ parser.add_argument('config_file', type=str, help = "The path to a json configur
 parser.add_argument('--save-only-first', action = 'store_true', help = "Set this to true to save the weights to W&B.", default = False)
 parser.add_argument('--wandb', action = 'store_true', help = "Whether or not to log the experiment to weights and biases.", default = False)
 parser.add_argument('--save', help = "Whether or not to save the trained weights.", action = 'store_true', default = False)
-parser.add_argument('--load', help = "Path of a pickle file containing pretrained weights.", default = False)
+parser.add_argument('--load', help = "Path of a pickle file containing pretrained weights.", default = None)
 parser.add_argument('--name', help = "Name of the run. If undefined, will create a random hash of the configuration.", default = "")
 parser.add_argument('-f', '--force', help = "If this is set, any existing weights with the same name will be removed", action = 'store_true', default = False)
 parser.add_argument('--cv', help = "The number of cross-validation folds to use. If unset, doesn't use cross-validation.", type = int, default = None)
@@ -72,7 +72,7 @@ data = Dataset.load(config['dataset'], rng=r1, drop_classes = config['drop_class
 target_datas = []
 if 'target_datasets' in config and config['target_datasets'] is not None:
     for target_name, target_drop_classes, target_official_split in zip(config['target_datasets'], config['targets_drop_classes'], config['targets_official_splits']):
-        target_datas.append(Dataset.load("data/" + target_name, rng=r2, drop_classes = target_drop_classes, official_split = target_official_split))
+        target_datas.append(Dataset.load(target_name, rng=r2, drop_classes = target_drop_classes, official_split = target_official_split))
 
 # TODO: Create conf matrix w/ std and means
 

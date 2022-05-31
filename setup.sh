@@ -1,8 +1,9 @@
 # BEFORE RUNNING: Add kaggle.json to ~/.kaggle/
-pip3 install -r requirements
-./download_mendeley.sh
+pip3 install -r requirements.txt
+pip install "jax[tpu]>=0.2.16" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
 sudo apt-get update
 sudo apt-get install ffmpeg libsm6 libxext6  -y
+./download_mendeley.sh
 mv data/curated_xray_dataset/ mendeley/
 pip3 install kaggle --upgrade
 sudo ln -s ~/.local/bin/kaggle /usr/bin/kaggle
@@ -15,6 +16,7 @@ mv "mendeley/Pneumonia-Bacterial" "mendeley/Bacterial pneumonia"
 mv "mendeley/Pneumonia-Viral" "mendeley/Viral pneumonia"
 mkdir covidx
 mkdir dup_data
+mkdir figs
 mkdir models
 cd covidx
 kaggle datasets download -d andyczhao/covidx-cxr2
@@ -23,6 +25,6 @@ rm covidx-cxr2.zip
 wget https://raw.githubusercontent.com/lindawangg/COVID-Net/master/labels/train_COVIDx9A.txt
 wget https://raw.githubusercontent.com/lindawangg/COVID-Net/master/labels/test_COVIDx9A.txt
 cd ..
-#python3 process_data.py mendeley
-#python3 process_data.py tawsifur
-#python3 process_covidx.py
+python3 process_data.py mendeley
+python3 process_data.py tawsifur
+python3 process_covidx.py
