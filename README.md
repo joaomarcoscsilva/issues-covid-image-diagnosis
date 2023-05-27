@@ -34,9 +34,9 @@ All source code used to generate the results and figures in the paper are contai
 You can download a copy of all the files in this repository by cloning the
 [git](https://git-scm.com/) repository:
 
-    git clone https://github.com/JoaoMarcosCSilva/xray_duplicates_detector.git
+    git clone https://github.com/JoaoMarcosCSilva/issues-covid-image-diagnosis.git
 
-or [download a zip archive](https://github.com/JoaoMarcosCSilva/xray_duplicates_detector/archive/refs/heads/main.zip)
+or [download a zip archive](https://github.com/JoaoMarcosCSilva/issues-covid-image-diagnosis/archive/refs/heads/main.zip)
 
 ## Reproducing the results
 
